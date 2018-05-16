@@ -4,7 +4,7 @@
 
 # Installation
 
-git clone git@bitbucket.org:rchristophorov/design_editor.git
+git clone https://github.com/RomanHristofor/design_editor.git
 
 # Run
 

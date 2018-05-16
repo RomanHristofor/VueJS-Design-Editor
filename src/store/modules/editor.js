@@ -4,7 +4,6 @@ export default {
         settings: [],
         color: {},
         width: {},
-        elementsMap: {},
     },
     getters: {
         settings(state) {
@@ -49,7 +48,11 @@ export default {
         setWidth(state, payload) {
 //            debugger
             state.width = payload;
-        }
+        },
+        resetSettings(state, payload) {
+            state.color = {color: payload.color};
+            state.width = payload.width;
+        },
     },
     actions: {
         loadSettings(store) {
@@ -61,6 +64,9 @@ export default {
         setWidth(store, newWidth) {
             store.commit('setWidth', newWidth);
         },
+        resetSettings(store, defSettings) {
+            store.commit('resetSettings', defSettings);
+        }
     },
 };
 

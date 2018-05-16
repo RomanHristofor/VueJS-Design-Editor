@@ -24,6 +24,7 @@
         name: "ColorPicker",
         props: ['settings'],
         created(){
+            // TODO fix defColor
             this.$store.dispatch('editor/setColor', {
                 color: this.settings.defColor
             });

@@ -1,5 +1,15 @@
 <template>
     <div>
+        <v-flex xs4>
+            <v-btn color="orange darken-2"
+                   dark
+                   @click="resetChanges"
+            >
+                <v-icon dark left>arrow_back</v-icon>Back
+            </v-btn>
+            <v-subheader></v-subheader>
+        </v-flex>
+
         <v-list-tile
             v-for="(item, index) in elements"
         >
@@ -16,6 +26,8 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
+
     import Slider from './EditorComponents/Slider';
     import ColorPicker from './EditorComponents/ColorPicker';
 
@@ -30,7 +42,12 @@
 
         },
         methods: {
-
+            resetChanges() {
+                this.$emit('clear', {
+                    color: this.$store.getters['editor/elemSettings'](1).defColor,
+                    width: this.$store.getters['editor/elemSettings'](0).defWidth,
+                })
+            },
         },
     }
 </script>

@@ -27,9 +27,8 @@
                     v-for="(elem, index) in settings"
                     v-if="elem.page === pageName"
                     :elements="elem.elements"
-
+                    @clear="clear"
                 />
-
             </v-list>
         </v-navigation-drawer>
         <v-toolbar
@@ -71,11 +70,16 @@
             pageName() {
                 return this.$route.name;
             },
+
         },
-        methods: {},
+        methods: {
+            clear(obj) {
+                this.$store.dispatch('editor/resetSettings', obj);
+            },
+        },
         data() {
             return {
-                //color1: '#5468f6',
+                // settings: this.$store.state.editor.settings,
                 clipped: false,
                 drawer: true,
                 fixed: false,
