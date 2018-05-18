@@ -20,9 +20,11 @@
             </v-btn>
         </v-toolbar>
 
+         <!--@{{currentWidth}}@-->
+
         <div class="text-xs-center mt-3">
             <v-btn @click.native="next"
-                   :style="{ width: width + '%' }"
+                   :style="{ width: currentWidth + '%' }"
             >
                 next tab
             </v-btn>
@@ -39,7 +41,8 @@
         computed: {
             ...mapGetters('editor', {
                 color: 'color',
-                width: 'width'
+                countWidth: 'getWidthID',
+                currentWidth: 'getCurrentWidth',
             }),
         },
         methods: {

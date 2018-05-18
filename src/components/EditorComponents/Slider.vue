@@ -6,10 +6,9 @@
         <v-list-tile-content >
 
             <v-slider
-                v-model="v"
-                :value="v"
+                :value="currentWidth"
                 step="0"
-                @input="setWidth(parseInt(v, 10))"
+                @input="setWidth($event)"
             />
 
         </v-list-tile-content>
@@ -18,18 +17,34 @@
 
 <script>
     import {mapActions} from 'vuex';
+    import {mapGetters} from 'vuex';
 
     export default {
         name: "Slider",
-        props: ['settings'],
-        methods: {
-            ...mapActions('editor', {
-                setWidth: 'setWidth'
+        props: ['settings', 'backWidth'],
+        computed: {
+            ...mapGetters('editor', {
+                countWidth: 'getWidthID',
+                currentWidth: 'getCurrentWidth',
             }),
+
+        },
+        methods: {
+            setWidth(newWidth) {
+                newWidth = newWidth || +this.settings.defWidth;
+
+                this.$store.dispatch('editor/setWidth', {
+                    id: ++this.count, width: parseInt(newWidth, 10)
+                });
+                // console.log('-- slider countWidth ', this.countWidth);
+
+                this.$store.dispatch('editor/setCurrentWidth', parseInt(newWidth, 10));
+            },
         },
         data() {
             return {
-                v: this.settings.defWidth,
+                count: 0,
+                // v: this.settings.defWidth,
             };
         },
     }

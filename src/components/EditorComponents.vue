@@ -1,15 +1,33 @@
 <template>
     <div>
         <v-flex xs4>
-            <v-btn color="orange darken-2"
-                   dark
-                   @click="resetChanges"
+            <!--<v-btn color="orange darken-2"-->
+                   <!--dark-->
+
+            <!--&gt;-->
+                <!--&lt;!&ndash;<router-link :to="{name: 'editor'}">Start from main page</router-link>&ndash;&gt;-->
+                <!--<v-icon dark left>arrow_back</v-icon>Back-->
+            <!--</v-btn>-->
+
+            <v-btn flat icon
+                   color="blue lighten-2"
+                   @click="next"
             >
-                <v-icon dark left>arrow_back</v-icon>Back
+                <v-icon>thumb_up</v-icon>
             </v-btn>
+
+            <v-btn flat icon
+                   color="red lighten-2"
+                   @click="back"
+
+            >
+                <v-icon>thumb_down</v-icon>
+            </v-btn>
+
             <v-subheader></v-subheader>
         </v-flex>
 
+        <!--ED currentWidth #{{currentWidth}}#  countWidth @{{countWidth}}@-->
         <v-list-tile
             v-for="(item, index) in elements"
         >
@@ -27,6 +45,7 @@
 
 <script>
     import { mapGetters } from 'vuex';
+    import { mapActions } from 'vuex';
 
     import Slider from './EditorComponents/Slider';
     import ColorPicker from './EditorComponents/ColorPicker';
@@ -39,15 +58,31 @@
             ColorPicker,
         },
         computed: {
-
+            ...mapGetters('editor', {
+                countWidth: 'getWidthID',
+                currentWidth: 'getCurrentWidth',
+            }),
         },
         methods: {
-            resetChanges() {
-                this.$emit('clear', {
-                    color: this.$store.getters['editor/elemSettings'](1).defColor,
-                    width: this.$store.getters['editor/elemSettings'](0).defWidth,
-                })
+            back(e) {
+                this.$store.dispatch('editor/decrementWidth');
+
+                this.v = this.$store.getters['editor/elemWidth'](this.countWidth).width;
+
+                this.$store.dispatch('editor/setCurrentWidth', this.v);
+
             },
+            next() {
+                debugger
+                this.$store.dispatch('editor/incrementWidth');
+            }
+        },
+        data() {
+            return {
+                count: 0,
+                isDisabledBack: true,
+                v: ''
+            };
         },
     }
 </script>

@@ -27,7 +27,7 @@
                     v-for="(elem, index) in settings"
                     v-if="elem.page === pageName"
                     :elements="elem.elements"
-                    @clear="clear"
+
                 />
             </v-list>
         </v-navigation-drawer>
@@ -73,9 +73,7 @@
 
         },
         methods: {
-            clear(obj) {
-                this.$store.dispatch('editor/resetSettings', obj);
-            },
+
         },
         data() {
             return {

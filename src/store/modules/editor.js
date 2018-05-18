@@ -3,7 +3,10 @@ export default {
     state: {
         settings: [],
         color: {},
-        width: {},
+        width: [],
+        widthID: {},
+        countWidth: 0,
+        currentWidth: '',
     },
     getters: {
         settings(state) {
@@ -26,8 +29,6 @@ export default {
             return map;
         },
         elemSettings: (state, getters) => (id) => {
-//            state.color = getters.elementsMap[id];
-//            console.log('get elem', state.color)
             return getters.elementsMap[id];
         },
         color(state) {
@@ -36,22 +37,47 @@ export default {
         width(state) {
             return state.width;
         },
+        elemWidthMap(state) {
+            let map = {};
+            for(let i = 0; i < state.width.length; i++){
+                let item = state.width[i];
+                map[item.id] = item;
+            }
+            console.log('stor   elemWidth  FULL   ' , map)
+            return map;
+        },
+        elemWidth: (state, getters) => (id) => {
+            if( id ){
+                return getters.elemWidthMap[id];
+            }
+        },
+        getWidthID(state) {
+            return state.countWidth;
+        },
+        getCurrentWidth(state) {
+            return state.currentWidth;
+        },
     },
     mutations: {
         loadSettings(state, data) {
             state.settings = data;
         },
         setColor(state, payload) {
-//            console.log('payload ' + payload);
             state.color = payload;
         },
         setWidth(state, payload) {
-//            debugger
-            state.width = payload;
+            state.width.push(payload);
+            state.widthID[state.countWidth] = state.countWidth++;
         },
-        resetSettings(state, payload) {
-            state.color = {color: payload.color};
-            state.width = payload.width;
+        setCurrentWidth(state, payload) {
+            state.currentWidth = payload;
+        },
+        decrementWidth(state) {
+            state.countWidth = state.countWidth > 1 ? --state.countWidth : 1;
+        },
+        incrementWidth(state) {
+            state.countWidth += 1;
+            console.log('increment + ', state.countWidth)
         },
     },
     actions: {
@@ -64,9 +90,16 @@ export default {
         setWidth(store, newWidth) {
             store.commit('setWidth', newWidth);
         },
-        resetSettings(store, defSettings) {
-            store.commit('resetSettings', defSettings);
-        }
+        setCurrentWidth(store, width) {
+            store.commit('setCurrentWidth', width);
+        },
+
+        decrementWidth(store) {
+            store.commit('decrementWidth');
+        },
+        incrementWidth(store) {
+            store.commit('incrementWidth');
+        },
     },
 };
 
