@@ -1,9 +1,9 @@
 <template>
     <div>
-        <v-list-tile-action >
+        <v-list-tile-action>
             {{ settings.text }}
         </v-list-tile-action>
-        <v-list-tile-content >
+        <v-list-tile-content>
 
             <v-slider
                 :value="currentWidth"
@@ -16,29 +16,32 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex';
-    import {mapGetters} from 'vuex';
+    // import { mapActions } from 'vuex';
+    import { mapGetters } from 'vuex';
 
     export default {
-        name: "Slider",
-        props: ['settings', 'backWidth'],
+        name: 'Slider',
+        props: ['settings'],
         computed: {
             ...mapGetters('editor', {
+                width: 'width',
                 countWidth: 'getWidthID',
                 currentWidth: 'getCurrentWidth',
             }),
-
         },
         methods: {
             setWidth(newWidth) {
                 newWidth = newWidth || +this.settings.defWidth;
 
                 this.$store.dispatch('editor/setWidth', {
-                    id: ++this.count, width: parseInt(newWidth, 10)
+                    id: ++this.count, width: parseInt(newWidth, 10),
                 });
-                // console.log('-- slider countWidth ', this.countWidth);
-
                 this.$store.dispatch('editor/setCurrentWidth', parseInt(newWidth, 10));
+
+                this.$emit('btn-disabled', {
+                    next: this.width.length === this.countWidth,
+                    back: newWidth === +this.settings.defWidth // TODO fix typing
+                });
             },
         },
         data() {
@@ -47,7 +50,7 @@
                 // v: this.settings.defWidth,
             };
         },
-    }
+    };
 </script>
 
 <style scoped>

@@ -38,6 +38,12 @@ import {
 } from 'vuetify';
 import '../node_modules/vuetify/src/stylus/app.styl';
 
+import { ColorPicker } from 'element-ui';
+import lang from 'element-ui/lib/locale/lang/en';
+import locale from 'element-ui/lib/locale';
+
+import VueResource from 'vue-resource';
+
 Vue.use(Vuetify, {
     components: {
         VApp,
@@ -80,17 +86,11 @@ Vue.use(Vuetify, {
         warning: '#FFC107',
     },
 });
-
-import { ColorPicker } from 'element-ui';
-import lang from 'element-ui/lib/locale/lang/en';
-import locale from 'element-ui/lib/locale';
 locale.use(lang);
 Vue.use(ColorPicker);
-
-import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
-//Vue.config.productionTip = false;
+// Vue.config.productionTip = false;
 
 // Vue.http.options.root = 'http://domain-name/api/'
 
@@ -100,6 +100,6 @@ new Vue({
     router,
     store,
     // components: { App },
-    // template: '<App/>'
+    // template: '<App/>',
     render: h => h(App),
 });

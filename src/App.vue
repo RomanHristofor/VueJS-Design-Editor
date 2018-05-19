@@ -24,7 +24,7 @@
                 </v-list-tile>
 
                 <editor-components
-                    v-for="(elem, index) in settings"
+                    v-for="(elem, i) in settings"
                     v-if="elem.page === pageName"
                     :elements="elem.elements"
 
@@ -53,8 +53,8 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
-    import {mapActions} from 'vuex';
+    import { mapGetters } from 'vuex';
+    // import { mapActions } from 'vuex';
 
     import EditorComponents from './components/EditorComponents';
 
@@ -65,19 +65,17 @@
         },
         computed: {
             ...mapGetters('editor', {
-                settings: 'settings'
+                settings: 'settings',
             }),
             pageName() {
                 return this.$route.name;
             },
-
         },
         methods: {
 
         },
         data() {
             return {
-                // settings: this.$store.state.editor.settings,
                 clipped: false,
                 drawer: true,
                 fixed: false,

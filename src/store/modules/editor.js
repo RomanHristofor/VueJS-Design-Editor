@@ -18,7 +18,7 @@ export default {
             for(let i = 0; i < state.settings.length; i++) {
                 // TODO fix get page
                 if ( window.location.pathname === state.settings[i].url ) {
-                    console.log('route', window.location.pathname === state.settings[i].url)
+                    // console.log('route', window.location.pathname === state.settings[i].url)
 
                     for(let l = 0; l < state.settings[i].elements.length; l++) {
                         let elem = state.settings[i].elements[l];
@@ -43,7 +43,7 @@ export default {
                 let item = state.width[i];
                 map[item.id] = item;
             }
-            console.log('stor   elemWidth  FULL   ' , map)
+            // console.log('stor   elemWidth  FULL   ' , map)
             return map;
         },
         elemWidth: (state, getters) => (id) => {
@@ -76,8 +76,9 @@ export default {
             state.countWidth = state.countWidth > 1 ? --state.countWidth : 1;
         },
         incrementWidth(state) {
-            state.countWidth += 1;
-            console.log('increment + ', state.countWidth)
+            state.countWidth = state.countWidth + 1 <= state.width.length ?
+                state.countWidth + 1 : state.countWidth;
+            // console.log('increment +  ', state.countWidth)
         },
     },
     actions: {
