@@ -2,11 +2,13 @@ export default {
     namespaced: true,
     state: {
         settings: [],
-        color: {},
-        width: [],
-        widthID: {},
-        countWidth: 0,
-        currentWidth: '',
+
+        allElemSettings: [],
+        currentElemWidth: {},
+        currentElemColor: {},
+        countElement: 0,
+
+        currentLength: 1,
     },
     getters: {
         settings(state) {
@@ -31,70 +33,75 @@ export default {
         elemSettings: (state, getters) => (id) => {
             return getters.elementsMap[id];
         },
-        color(state) {
-            return state.color;
+        getCurrentElemWidth(state) {
+            return state.currentElemWidth;
         },
-        width(state) {
-            return state.width;
+        getCurrentElemColor(state) {
+            return state.currentElemColor;
         },
-        elemWidthMap(state) {
+        getCountElement(state) {
+            return state.countElement;
+        },
+        allElemSettingsMap(state) {
             let map = {};
-            for(let i = 0; i < state.width.length; i++){
-                let item = state.width[i];
+            for(let i = 0; i < state.allElemSettings.length; i++){
+                let item = state.allElemSettings[i];
                 map[item.id] = item;
             }
-            // console.log('stor   elemWidth  FULL   ' , map)
             return map;
         },
-        elemWidth: (state, getters) => (id) => {
-            if( id ){
-                return getters.elemWidthMap[id];
-            }
+        getCurrentElem: (state, getters) => (id) => {
+            return getters.allElemSettingsMap[id];
         },
-        getWidthID(state) {
-            return state.countWidth;
-        },
-        getCurrentWidth(state) {
-            return state.currentWidth;
-        },
+        getBackElement(state) {
+            return state.allElemSettings[state.allElemSettings.length - state.currentLength]
+        }
+
     },
     mutations: {
+        setCurrentLength(state, payload) {
+            state.currentLength = payload;
+        },
         loadSettings(state, data) {
             state.settings = data;
         },
-        setColor(state, payload) {
-            state.color = payload;
+        setElemSettings(state, payload) {
+            payload.id = state.countElement++;
+            state.allElemSettings.push(payload);
+            payload.width ? state.currentElemWidth = payload : state.currentElemColor = payload;
         },
-        setWidth(state, payload) {
-            state.width.push(payload);
-            state.widthID[state.countWidth] = state.countWidth++;
+        setCurrentElemColor(state, payload) {
+            return state.currentElemColor = payload;
         },
-        setCurrentWidth(state, payload) {
-            state.currentWidth = payload;
+        setCurrentElemWidth(state, payload) {
+            return state.currentElemWidth = payload;
         },
         decrementWidth(state) {
-            state.countWidth = state.countWidth > 1 ? --state.countWidth : 1;
+            state.countElement = state.countElement > 1 ? --state.countElement : 1;
+            console.log(' --- stor  decrementWidth ', state.countElement)
         },
         incrementWidth(state) {
-            state.countWidth = state.countWidth + 1 <= state.width.length ?
-                state.countWidth + 1 : state.countWidth;
-            // console.log('increment +  ', state.countWidth)
+            state.countElement = state.countElement + 1 <= state.allElemSettings.length ?
+                state.countElement + 1 : state.countElement;
+            console.log(' --- stor  incrementWidth ', state.countElement)
         },
     },
     actions: {
+        setCurrentElemColor(store, newElement) {
+            store.commit('setCurrentElemColor', newElement);
+        },
+        setCurrentElemWidth(store, newElement) {
+            store.commit('setCurrentElemWidth', newElement);
+        },
+        setCurrentLength(store, count) {
+            store.commit('setCurrentLength', count);
+        },
         loadSettings(store) {
             store.commit('loadSettings', loadSettings());
         },
-        setColor(store, newColor) {
-            store.commit('setColor', newColor);
+        setElemSettings(store, newSettings) {
+            store.commit('setElemSettings', newSettings);
         },
-        setWidth(store, newWidth) {
-            store.commit('setWidth', newWidth);
-        },
-        setCurrentWidth(store, width) {
-            store.commit('setCurrentWidth', width);
-        },
-
         decrementWidth(store) {
             store.commit('decrementWidth');
         },

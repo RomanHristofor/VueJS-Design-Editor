@@ -25,8 +25,8 @@
                 <v-icon>thumb_down</v-icon>
             </v-btn>
             <v-subheader></v-subheader>
-            <!--curr W #{{currentWidth}}#-->
-            <!--count W @{{countWidth}}@-->
+            count !@{{countElement}}@!
+
             <v-subheader></v-subheader>
         </v-flex>
 
@@ -62,44 +62,56 @@
         },
         computed: {
             ...mapGetters('editor', {
-                width: 'width',
-                countWidth: 'getWidthID',
-                currentWidth: 'getCurrentWidth',
+                elemWidth: 'getCurrentElemWidth',
+                elemColor: 'getCurrentElemColor',
+                countElement: 'getCountElement',
+                lastElement: 'getBackElement',
             }),
         },
         methods: {
             back() {
-                this.$store.dispatch('editor/decrementWidth');
+                console.log( this.lastElement );
 
-                this.$store.dispatch(
-                    'editor/setCurrentWidth',
-                    this.$store.getters['editor/elemWidth'](this.countWidth).width
-                );
-                // TODO ne DRY
-                this.isDisabledNext = !this.width.length > 1;
-                this.isDisabledBack = this.countWidth === 1;
+                this.$store.dispatch('editor/setCurrentLength', this.countElement);
+
+                if (this.lastElement.color) {
+                    this.$store.dispatch('editor/decrementWidth');
+                    this.$store.dispatch('editor/setCurrentElemColor', this.lastElement);
+                }
+
+                if (this.lastElement.width) { // TODO проверка на 0
+                    this.$store.dispatch('editor/decrementWidth');
+                    this.$store.dispatch('editor/setCurrentElemWidth', this.lastElement);
+                }
+
+                // this.isDisabled();
             },
             next() {
                 this.$store.dispatch('editor/incrementWidth');
 
-                this.$store.dispatch(
-                    'editor/setCurrentWidth',
-                    this.$store.getters['editor/elemWidth'](this.countWidth).width
-                );
+                // this.$store.dispatch(
+                //     'editor/setCurrentSetting',
+                //     this.$store.getters['editor/getCurrentElem'](this.countElement)
+                // );
 
-                this.isDisabledNext = this.width.length === this.countWidth;
-                this.isDisabledBack = this.countWidth === 1;
+                // this.isDisabled();
+            },
+            isDisabled() {
+                this.isDisabledNext = this.allElemSettings.length === this.countElement;
+                this.isDisabledBack = this.countElement === 1;
             },
             btnDisabled(btnIsDisabled) {
-                this.isDisabledBack = btnIsDisabled.back;
-                this.isDisabledNext = btnIsDisabled.next;
+                // this.isDisabledBack = btnIsDisabled.back;
+                // this.isDisabledNext = btnIsDisabled.next;
             },
         },
         data() {
             return {
                 count: 0,
-                isDisabledBack: true,
-                isDisabledNext: true,
+                isDisabledBack: false,
+                isDisabledNext: false,
+                // isDisabledBack: true,
+                // isDisabledNext: true,
                 v: '',
             };
         },

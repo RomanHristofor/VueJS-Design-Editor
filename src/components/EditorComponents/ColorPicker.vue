@@ -4,11 +4,10 @@
             {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-
+            
             <el-color-picker
-                v-model="v"
-                :value="v"
-                @change="setColor({ color: v })"
+                :value="elemColor.color"
+                @change="setColor($event)"
                 size="mini"
             />
 
@@ -21,25 +20,28 @@
     import { mapActions } from 'vuex';
 
     export default {
-        name: "ColorPicker",
+        name: 'ColorPicker',
         props: ['settings'],
-        created(){
-            // TODO fix defColor
-            this.$store.dispatch('editor/setColor', {
-                color: this.settings.defColor
+        created() {
+            this.$store.dispatch('editor/setElemSettings', {
+                id: ++this.count, color: this.settings.defColor
             });
         },
         computed: {
-
+            ...mapGetters('editor', {
+                elemColor: 'getCurrentElemColor',
+            }),
         },
         methods: {
-            ...mapActions('editor', {
-                setColor: 'setColor'
-            }),
+            setColor(newColor) {
+                this.$store.dispatch('editor/setElemSettings', {
+                    color: newColor
+                });
+            },
         },
         data() {
             return {
-                v: this.settings.defColor,
+                count: 0,
             };
         },
     }

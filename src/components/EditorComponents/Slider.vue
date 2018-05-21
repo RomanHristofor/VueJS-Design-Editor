@@ -4,9 +4,9 @@
             {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-
+            @{{elemWidth}}@
             <v-slider
-                :value="currentWidth"
+                :value="elemWidth.width"
                 step="0"
                 @input="setWidth($event)"
             />
@@ -24,30 +24,25 @@
         props: ['settings'],
         computed: {
             ...mapGetters('editor', {
-                width: 'width',
-                countWidth: 'getWidthID',
-                currentWidth: 'getCurrentWidth',
+                elemWidth: 'getCurrentElemWidth',
+                countElement: 'getCountElement',
             }),
         },
         methods: {
             setWidth(newWidth) {
-                newWidth = newWidth || +this.settings.defWidth;
+                // if( !Number.isNaN( newWidth )) {
+                    newWidth = newWidth || +this.settings.defWidth;
 
-                this.$store.dispatch('editor/setWidth', {
-                    id: ++this.count, width: parseInt(newWidth, 10),
-                });
-                this.$store.dispatch('editor/setCurrentWidth', parseInt(newWidth, 10));
+                    let elemSettings = {id: ++this.count, width: parseInt(newWidth, 10)};
 
-                this.$emit('btn-disabled', {
-                    next: this.width.length === this.countWidth,
-                    back: newWidth === +this.settings.defWidth // TODO fix typing
-                });
+                    this.$store.dispatch('editor/setElemSettings', elemSettings);
+
+                // }
             },
         },
         data() {
             return {
                 count: 0,
-                // v: this.settings.defWidth,
             };
         },
     };

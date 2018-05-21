@@ -1,8 +1,9 @@
 <template>
     <div>
-        <!--@{{color.color}}@-->
+        site@{{elemColor}}@
+        Element #{{elemWidth}}#
         <v-toolbar dark
-                   :style="{ background: color.color }"
+                   :style="{ background: elemColor.color }"
         >
             <v-toolbar-title class="white--text">{{title}}</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -20,11 +21,9 @@
             </v-btn>
         </v-toolbar>
 
-         <!--@{{currentWidth}}@-->
-
         <div class="text-xs-center mt-3">
             <v-btn @click.native="next"
-                   :style="{ width: currentWidth + '%' }"
+                   :style="{ width: elemWidth.width + '%' }"
             >
                 next tab
             </v-btn>
@@ -34,15 +33,15 @@
 
 <script>
     import {mapGetters} from 'vuex';
+    import {mapActions} from 'vuex';
 
     export default {
         name: 'Site',
-        components: {},
         computed: {
             ...mapGetters('editor', {
-                color: 'color',
-                countWidth: 'getWidthID',
-                currentWidth: 'getCurrentWidth',
+                elemWidth: 'getCurrentElemWidth',
+                elemColor: 'getCurrentElemColor',
+                // countElement: 'getCountElement',
             }),
         },
         methods: {
