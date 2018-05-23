@@ -25,7 +25,7 @@
                 <v-icon>thumb_down</v-icon>
             </v-btn>
             <v-subheader></v-subheader>
-            count !@{{countElement}}@!
+             <!--len @{{allElemSettingsLength}}@-->
 
             <v-subheader></v-subheader>
         </v-flex>
@@ -40,6 +40,7 @@
 
             <color-picker v-if="item.cPicker"
                 :settings="item"
+                @btn-disabled="btnDisabled"
             />
 
         </v-list-tile>
@@ -62,57 +63,72 @@
         },
         computed: {
             ...mapGetters('editor', {
-                elemWidth: 'getCurrentElemWidth',
-                elemColor: 'getCurrentElemColor',
                 countElement: 'getCountElement',
                 lastElement: 'getBackElement',
+                allElemSettingsLength: 'getAllElemSettingsLength',
             }),
         },
         methods: {
             back() {
-                console.log( this.lastElement );
-
-                this.$store.dispatch('editor/setCurrentLength', this.countElement);
+                this.$store.dispatch('editor/setCurrentLength', 'back');
 
                 if (this.lastElement.color) {
-                    this.$store.dispatch('editor/decrementWidth');
-                    this.$store.dispatch('editor/setCurrentElemColor', this.lastElement);
+                    this.$store.dispatch('editor/decrement');
+
+                    this.$store.dispatch(
+                        'editor/setCurrentElemColor',
+                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id-1, 'color')
+                    );
                 }
 
-                if (this.lastElement.width) { // TODO проверка на 0
-                    this.$store.dispatch('editor/decrementWidth');
-                    this.$store.dispatch('editor/setCurrentElemWidth', this.lastElement);
+                if (this.lastElement.width >= 0) {
+                    this.$store.dispatch('editor/decrement');
+
+                    this.$store.dispatch(
+                        'editor/setCurrentElemWidth',
+                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id-1, 'width')
+                    );
                 }
 
-                // this.isDisabled();
+                this.isDisabled();
             },
             next() {
-                this.$store.dispatch('editor/incrementWidth');
+                this.$store.dispatch('editor/setCurrentLength', 'next');
 
-                // this.$store.dispatch(
-                //     'editor/setCurrentSetting',
-                //     this.$store.getters['editor/getCurrentElem'](this.countElement)
-                // );
+                if (this.lastElement.color) {
+                    this.$store.dispatch('editor/increment');
 
-                // this.isDisabled();
+                    this.$store.dispatch(
+                        'editor/setCurrentElemColor',
+                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id, 'color')
+                    );
+                }
+
+                if (this.lastElement.width >= 0) {
+                    this.$store.dispatch('editor/increment');
+
+                    this.$store.dispatch(
+                        'editor/setCurrentElemWidth',
+                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id, 'width')
+                    );
+                }
+
+                this.isDisabled();
             },
             isDisabled() {
-                this.isDisabledNext = this.allElemSettings.length === this.countElement;
-                this.isDisabledBack = this.countElement === 1;
+                this.isDisabledNext = this.countElement >= this.allElemSettingsLength;
+                this.isDisabledBack = this.countElement <= 2;
             },
             btnDisabled(btnIsDisabled) {
-                // this.isDisabledBack = btnIsDisabled.back;
-                // this.isDisabledNext = btnIsDisabled.next;
+                this.isDisabledBack = btnIsDisabled.back;
+                this.isDisabledNext = btnIsDisabled.next;
             },
         },
         data() {
             return {
-                count: 0,
-                isDisabledBack: false,
-                isDisabledNext: false,
-                // isDisabledBack: true,
-                // isDisabledNext: true,
-                v: '',
+                // count: 0,
+                isDisabledBack: true,
+                isDisabledNext: true,
             };
         },
     };

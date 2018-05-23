@@ -8,7 +8,8 @@ export default {
         currentElemColor: {},
         countElement: 0,
 
-        currentLength: 1,
+        currentLength: 0,
+        currElemSettings: [],
     },
     getters: {
         settings(state) {
@@ -45,28 +46,55 @@ export default {
         allElemSettingsMap(state) {
             let map = {};
             for(let i = 0; i < state.allElemSettings.length; i++){
-                let item = state.allElemSettings[i];
-                map[item.id] = item;
+                map[i] = state.allElemSettings[i];
             }
+            console.log('     @@@@@@@@   MAPA ', map);
             return map;
         },
-        getCurrentElem: (state, getters) => (id) => {
-            return getters.allElemSettingsMap[id];
+        getCurrentElem: (state, getters) => (id, prop) => {
+            // mapa for elem prop
+
+            return _.filter(getters.allElemSettingsMap, // TODO Lodash
+                function(o) {
+                return o.id === id && o[prop];
+            })[0];
         },
         getBackElement(state) {
             return state.allElemSettings[state.allElemSettings.length - state.currentLength]
-        }
+        },
+        getAllElemSettingsLength(state) {
+            return state.allElemSettings.length;
+        },
+        getSaveActions(state) {
+            return state.currElemSettings;
+        },
 
     },
     mutations: {
         setCurrentLength(state, payload) {
-            state.currentLength = payload;
+            if (payload === 'back') {
+                if(state.countElement === state.allElemSettings.length && state.currentLength !== 0) {
+                    state.currentLength = 0;
+                }
+                state.currentLength += 1;
+            }
+            if (payload === 'next') {
+                state.currentLength = state.currentLength >= state.countElement ? state.currentLength-- :
+                    state.currentLength < 2 ? state.currentLength : --state.currentLength;
+            }
         },
+        // setSaveActions(state, currElem) {
+        //     state.currElemSettings.push(currElem)
+        // },
         loadSettings(state, data) {
             state.settings = data;
         },
+        replaceElement(state) {
+            state.allElemSettings.splice(state.countElement, 1);
+            // state.currentLength = 0;
+        },
         setElemSettings(state, payload) {
-            payload.id = state.countElement++;
+            state.countElement++;
             state.allElemSettings.push(payload);
             payload.width ? state.currentElemWidth = payload : state.currentElemColor = payload;
         },
@@ -76,23 +104,28 @@ export default {
         setCurrentElemWidth(state, payload) {
             return state.currentElemWidth = payload;
         },
-        decrementWidth(state) {
-            state.countElement = state.countElement > 1 ? --state.countElement : 1;
-            console.log(' --- stor  decrementWidth ', state.countElement)
+        decrement(state) {
+            state.countElement = state.countElement >= 3 ? state.countElement -1 : state.countElement;
+            console.log(' --- stor  decrement ', state.countElement)
         },
-        incrementWidth(state) {
-            state.countElement = state.countElement + 1 <= state.allElemSettings.length ?
-                state.countElement + 1 : state.countElement;
-            console.log(' --- stor  incrementWidth ', state.countElement)
+        increment(state) {
+            state.countElement = state.countElement + 1 > state.allElemSettings.length ? state.countElement : state.countElement+1;
+            console.log(' +++ stor  increment ', state.countElement)
         },
     },
     actions: {
+        replaceElement(store) {
+            store.commit('replaceElement');
+        },
         setCurrentElemColor(store, newElement) {
             store.commit('setCurrentElemColor', newElement);
         },
         setCurrentElemWidth(store, newElement) {
             store.commit('setCurrentElemWidth', newElement);
         },
+        // setSaveActions(store, newElement) {
+        //     store.commit('setSaveActions', newElement);
+        // },
         setCurrentLength(store, count) {
             store.commit('setCurrentLength', count);
         },
@@ -102,11 +135,11 @@ export default {
         setElemSettings(store, newSettings) {
             store.commit('setElemSettings', newSettings);
         },
-        decrementWidth(store) {
-            store.commit('decrementWidth');
+        decrement(store) {
+            store.commit('decrement');
         },
-        incrementWidth(store) {
-            store.commit('incrementWidth');
+        increment(store) {
+            store.commit('increment');
         },
     },
 };

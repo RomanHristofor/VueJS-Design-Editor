@@ -1,7 +1,7 @@
 <template>
     <div>
-        site@{{elemColor}}@
-        Element #{{elemWidth}}#
+        <!--site@{{elemColor}}@-->
+        <!--Element #{{elemWidth}}#-->
         <v-toolbar dark
                    :style="{ background: elemColor.color }"
         >

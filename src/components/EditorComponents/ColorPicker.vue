@@ -4,7 +4,7 @@
             {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-            
+
             <el-color-picker
                 :value="elemColor.color"
                 @change="setColor($event)"
@@ -23,21 +23,40 @@
         name: 'ColorPicker',
         props: ['settings'],
         created() {
-            this.$store.dispatch('editor/setElemSettings', {
-                id: ++this.count, color: this.settings.defColor
-            });
+            let elemSettings = {id: ++this.count, color: this.settings.defColor};
+            this.$store.dispatch('editor/setElemSettings', elemSettings);
         },
         computed: {
             ...mapGetters('editor', {
                 elemColor: 'getCurrentElemColor',
+                countElement: 'getCountElement',
+                len: 'getAllElemSettingsLength',
+                lastElement: 'getBackElement',
+
+                // colorAction: 'getSaveActions',
             }),
         },
         methods: {
             setColor(newColor) {
-                this.$store.dispatch('editor/setElemSettings', {
-                    color: newColor
-                });
+                if (this.countElement < this.len && this.lastElement) {
+
+                    let newElem = {id: ++this.count, color: newColor};
+                    this.$store.dispatch('editor/replaceElement');
+                    this.$store.dispatch('editor/setElemSettings', newElem);
+
+                } else {
+                    let newElem = {id: ++this.count, color: newColor};
+                    this.$store.dispatch('editor/setElemSettings', newElem);
+                }
+
+                this.disabledBtn(newColor);
             },
+            disabledBtn(v) {
+                this.$emit('btn-disabled', {
+                    next: this.len === this.countElement,
+                    back: v === this.settings.defColor
+                });
+            }
         },
         data() {
             return {
