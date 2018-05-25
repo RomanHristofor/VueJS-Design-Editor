@@ -6,10 +6,8 @@ export default {
         allElemSettings: [],
         currentElemWidth: {},
         currentElemColor: {},
-        countElement: 0,
-
         currentLength: 0,
-        currElemSettings: [],
+        counter: 0,
     },
     getters: {
         settings(state) {
@@ -41,60 +39,51 @@ export default {
             return state.currentElemColor;
         },
         getCountElement(state) {
-            return state.countElement;
+            return state.counter;
+        },
+        getAllElemSettingsLength(state) {
+            return state.allElemSettings.length;
         },
         allElemSettingsMap(state) {
             let map = {};
             for(let i = 0; i < state.allElemSettings.length; i++){
                 map[i] = state.allElemSettings[i];
             }
-            console.log('     @@@@@@@@   MAPA ', map);
+            // console.log('     @@@@@@@@   MAPA ', map);
             return map;
         },
         getCurrentElem: (state, getters) => (id, prop) => {
             // mapa for elem prop
-
             return _.filter(getters.allElemSettingsMap, // TODO Lodash
                 function(o) {
+                    console.log( ' ++++++++  MAPA   ', o.id === id && o[prop] );
                 return o.id === id && o[prop];
             })[0];
         },
         getBackElement(state) {
             return state.allElemSettings[state.allElemSettings.length - state.currentLength]
         },
-        getAllElemSettingsLength(state) {
-            return state.allElemSettings.length;
-        },
-        getSaveActions(state) {
-            return state.currElemSettings;
-        },
 
     },
     mutations: {
         setCurrentLength(state, payload) {
             if (payload === 'back') {
-                if(state.countElement === state.allElemSettings.length && state.currentLength !== 0) {
+                if(state.counter === state.allElemSettings.length) {
                     state.currentLength = 0;
                 }
                 state.currentLength += 1;
             }
             if (payload === 'next') {
-                state.currentLength = state.currentLength >= state.countElement ? state.currentLength-- :
-                    state.currentLength < 2 ? state.currentLength : --state.currentLength;
+                if (state.allElemSettings.length - state.counter !== 0) {
+                    state.currentLength = state.allElemSettings.length - state.counter;
+                } else {
+                    state.currentLength -=1;
+                    // console.log('   @@@@@+++++++    next  ELSE  ', state.currentLength );
+                }
             }
         },
-        // setSaveActions(state, currElem) {
-        //     state.currElemSettings.push(currElem)
-        // },
-        loadSettings(state, data) {
-            state.settings = data;
-        },
-        replaceElement(state) {
-            state.allElemSettings.splice(state.countElement, 1);
-            // state.currentLength = 0;
-        },
         setElemSettings(state, payload) {
-            state.countElement++;
+            state.counter++;
             state.allElemSettings.push(payload);
             payload.width ? state.currentElemWidth = payload : state.currentElemColor = payload;
         },
@@ -104,18 +93,32 @@ export default {
         setCurrentElemWidth(state, payload) {
             return state.currentElemWidth = payload;
         },
+        replaceElement(state, payload) {
+            state.allElemSettings.splice(state.counter, 1, payload);
+        },
+        clearToDefault(state) {
+            state.counter = 2;
+            state.allElemSettings.splice(state.counter, 2);
+            state.allElemSettings.length = 2
+        },
         decrement(state) {
-            state.countElement = state.countElement >= 3 ? state.countElement -1 : state.countElement;
-            console.log(' --- stor  decrement ', state.countElement)
+            state.counter -= 1;
+            console.log(' --- stor  decrement ', state.counter , state.allElemSettings.length)
         },
         increment(state) {
-            state.countElement = state.countElement + 1 > state.allElemSettings.length ? state.countElement : state.countElement+1;
-            console.log(' +++ stor  increment ', state.countElement)
+            state.counter += 1;
+            console.log(' +++ stor  increment ', state.counter)
+        },
+        loadSettings(state, data) {
+            state.settings = data;
         },
     },
     actions: {
-        replaceElement(store) {
-            store.commit('replaceElement');
+        clearToDefault(store) {
+            store.commit('clearToDefault');
+        },
+        replaceElement(store, newElement) {
+            store.commit('replaceElement', newElement);
         },
         setCurrentElemColor(store, newElement) {
             store.commit('setCurrentElemColor', newElement);
@@ -123,9 +126,6 @@ export default {
         setCurrentElemWidth(store, newElement) {
             store.commit('setCurrentElemWidth', newElement);
         },
-        // setSaveActions(store, newElement) {
-        //     store.commit('setSaveActions', newElement);
-        // },
         setCurrentLength(store, count) {
             store.commit('setCurrentLength', count);
         },

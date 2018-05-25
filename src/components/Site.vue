@@ -41,7 +41,6 @@
             ...mapGetters('editor', {
                 elemWidth: 'getCurrentElemWidth',
                 elemColor: 'getCurrentElemColor',
-                // countElement: 'getCountElement',
             }),
         },
         methods: {

@@ -23,29 +23,27 @@
         name: 'ColorPicker',
         props: ['settings'],
         created() {
-            let elemSettings = {id: ++this.count, color: this.settings.defColor};
+            let elemSettings = {id: ++this.i, color: this.settings.defColor};
             this.$store.dispatch('editor/setElemSettings', elemSettings);
         },
         computed: {
             ...mapGetters('editor', {
                 elemColor: 'getCurrentElemColor',
-                countElement: 'getCountElement',
+                count: 'getCountElement',
                 len: 'getAllElemSettingsLength',
                 lastElement: 'getBackElement',
-
-                // colorAction: 'getSaveActions',
             }),
         },
         methods: {
             setColor(newColor) {
-                if (this.countElement < this.len && this.lastElement) {
+                if (this.count < this.len && this.lastElement) {
 
-                    let newElem = {id: ++this.count, color: newColor};
-                    this.$store.dispatch('editor/replaceElement');
-                    this.$store.dispatch('editor/setElemSettings', newElem);
+                    let newElem = {id: this.i, color: newColor};
+                    this.$store.dispatch('editor/replaceElement', newElem);
+                    this.$store.dispatch('editor/setCurrentElemColor', newElem);
 
                 } else {
-                    let newElem = {id: ++this.count, color: newColor};
+                    let newElem = {id: ++this.i, color: newColor};
                     this.$store.dispatch('editor/setElemSettings', newElem);
                 }
 
@@ -53,14 +51,14 @@
             },
             disabledBtn(v) {
                 this.$emit('btn-disabled', {
-                    next: this.len === this.countElement,
+                    next: this.len === this.count,
                     back: v === this.settings.defColor
                 });
             }
         },
         data() {
             return {
-                count: 0,
+                i: 0,
             };
         },
     }

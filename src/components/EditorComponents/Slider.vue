@@ -25,27 +25,25 @@
         computed: {
             ...mapGetters('editor', {
                 elemWidth: 'getCurrentElemWidth',
-                countElement: 'getCountElement',
+                count: 'getCountElement',
                 len: 'getAllElemSettingsLength',
                 lastElement: 'getBackElement',
-
-                // currAction: 'getSaveActions',
             }),
         },
         methods: {
             setWidth(newWidth) {
-                if (this.countElement < this.len && this.lastElement) {
+                if (this.count < this.len && this.lastElement) {
 
-                    let newElem = {id: ++this.count, width: parseInt(newWidth, 10)};
+                    let newElem = {id: this.i, width: parseInt(newWidth, 10)};
 
-                    this.$store.dispatch('editor/replaceElement');
-                    this.$store.dispatch('editor/setElemSettings', newElem);
+                    this.$store.dispatch('editor/replaceElement', newElem);
+                    this.$store.dispatch('editor/setCurrentElemWidth', newElem);
 
                 } else {
                     // TODO check is NaN  - if( !Number.isNaN( newWidth ))
                     newWidth = newWidth || +this.settings.defWidth;
 
-                    let elemSettings = {id: ++this.count, width: parseInt(newWidth, 10)};
+                    let elemSettings = {id: ++this.i, width: parseInt(newWidth, 10)};
                     this.$store.dispatch('editor/setElemSettings', elemSettings);
                 }
 
@@ -53,14 +51,14 @@
             },
             disabledBtn(v) {
                 this.$emit('btn-disabled', {
-                    next: this.len === this.countElement,
+                    next: this.len === this.count,
                     back: v === +this.settings.defWidth // TODO fix typing
                 });
             }
         },
         data() {
             return {
-                count: 0,
+                i: 0,
             };
         },
     };

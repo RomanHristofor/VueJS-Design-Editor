@@ -8,6 +8,12 @@
                 <!--&lt;!&ndash;<router-link :to="{name: 'editor'}">Start from main page</router-link>&ndash;&gt;-->
                 <!--<v-icon dark left>arrow_back</v-icon>Back-->
             <!--</v-btn>-->
+            <v-btn color="warning"
+                   :disabled="isDisabledClearBtn"
+                   @click="clearChanges"
+                >
+                Clear
+            </v-btn>
 
             <v-btn flat icon
                    color="blue lighten-2"
@@ -63,7 +69,7 @@
         },
         computed: {
             ...mapGetters('editor', {
-                countElement: 'getCountElement',
+                count: 'getCountElement',
                 lastElement: 'getBackElement',
                 allElemSettingsLength: 'getAllElemSettingsLength',
             }),
@@ -71,6 +77,7 @@
         methods: {
             back() {
                 this.$store.dispatch('editor/setCurrentLength', 'back');
+                console.log( '  $$%%%$$$$   back --- lastElement    ', this.lastElement);
 
                 if (this.lastElement.color) {
                     this.$store.dispatch('editor/decrement');
@@ -95,6 +102,8 @@
             next() {
                 this.$store.dispatch('editor/setCurrentLength', 'next');
 
+                console.log( '  $$%%%$$$$   next --- lastElement    ', this.lastElement);
+
                 if (this.lastElement.color) {
                     this.$store.dispatch('editor/increment');
 
@@ -116,19 +125,33 @@
                 this.isDisabled();
             },
             isDisabled() {
-                this.isDisabledNext = this.countElement >= this.allElemSettingsLength;
-                this.isDisabledBack = this.countElement <= 2;
+                this.isDisabledNext = this.count >= this.allElemSettingsLength;
+                this.isDisabledBack = this.count <= 2;
             },
             btnDisabled(btnIsDisabled) {
                 this.isDisabledBack = btnIsDisabled.back;
                 this.isDisabledNext = btnIsDisabled.next;
+                this.isDisabledClearBtn = this.count === 2;
             },
+            clearChanges() {
+                this.$store.dispatch('editor/clearToDefault');
+                this.isDisabledClearBtn = this.count === this.allElemSettingsLength;
+                this.$store.dispatch(
+                    'editor/setCurrentElemColor',
+                    this.$store.getters['editor/getCurrentElem'](1, 'color')
+                );
+                this.$store.dispatch(
+                    'editor/setCurrentElemWidth',
+                    this.$store.getters['editor/getCurrentElem'](1, 'width')
+                );
+                this.isDisabled();
+            }
         },
         data() {
             return {
-                // count: 0,
                 isDisabledBack: true,
                 isDisabledNext: true,
+                isDisabledClearBtn: true,
             };
         },
     };
