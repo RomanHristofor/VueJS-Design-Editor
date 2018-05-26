@@ -4,9 +4,9 @@
             {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-
+            <!--@{{elemColor.newValue}}@-->
             <el-color-picker
-                :value="elemColor.color"
+                :value="elemColor.newValue"
                 @change="setColor($event)"
                 size="mini"
             />
@@ -21,47 +21,42 @@
 
     export default {
         name: 'ColorPicker',
-        props: ['settings'],
+        props: ['settings', 'id'],
         created() {
-            let elemSettings = {id: ++this.count, color: this.settings.defColor};
-            this.$store.dispatch('editor/setElemSettings', elemSettings);
+            let elemSettings = {
+                id: this.id,
+                field: 'color',
+                newValue: this.elemColor.newValue || this.settings.defColor,
+                oldValue: this.settings.defColor
+            };
+            this.$store.dispatch('editor/setElements', elemSettings);
         },
         computed: {
             ...mapGetters('editor', {
-                elemColor: 'getCurrentElemColor',
-                countElement: 'getCountElement',
-                len: 'getAllElemSettingsLength',
-                lastElement: 'getBackElement',
-
-                // colorAction: 'getSaveActions',
+                elemColor: 'getReadElemColor',
+                counter: 'getCounter',
+                elemLength: 'getElemSettingsLength',
             }),
         },
         methods: {
             setColor(newColor) {
-                if (this.countElement < this.len && this.lastElement) {
+                let elemSettings = {
+                    id: this.id,
+                    field: 'color',
+                    newValue: newColor || this.settings.defColor,
+                    oldValue: this.elemColor.newValue
+                };
 
-                    let newElem = {id: ++this.count, color: newColor};
-                    this.$store.dispatch('editor/replaceElement');
-                    this.$store.dispatch('editor/setElemSettings', newElem);
-
-                } else {
-                    let newElem = {id: ++this.count, color: newColor};
-                    this.$store.dispatch('editor/setElemSettings', newElem);
+                if (this.counter < this.elemLength) {
+                    this.$store.dispatch('editor/replaceElement', elemSettings);
                 }
 
-                this.disabledBtn(newColor);
+                this.$store.dispatch('editor/setElemSettings', elemSettings);
+                this.$store.dispatch('editor/setElements', elemSettings);
             },
-            disabledBtn(v) {
-                this.$emit('btn-disabled', {
-                    next: this.len === this.countElement,
-                    back: v === this.settings.defColor
-                });
-            }
         },
         data() {
-            return {
-                count: 0,
-            };
+            return {};
         },
     }
 </script>

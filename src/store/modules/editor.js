@@ -4,12 +4,12 @@ export default {
         settings: [],
 
         allElemSettings: [],
-        currentElemWidth: {},
-        currentElemColor: {},
-        countElement: 0,
-
-        currentLength: 0,
-        currElemSettings: [],
+        elemWidth: {},
+        elemColor: {},
+        currentEl: {},
+        counter: 0,
+        isDisabledNext: true,
+        isDisabledBack: true,
     },
     getters: {
         settings(state) {
@@ -34,112 +34,92 @@ export default {
         elemSettings: (state, getters) => (id) => {
             return getters.elementsMap[id];
         },
-        getCurrentElemWidth(state) {
-            return state.currentElemWidth;
-        },
-        getCurrentElemColor(state) {
-            return state.currentElemColor;
-        },
-        getCountElement(state) {
-            return state.countElement;
-        },
-        allElemSettingsMap(state) {
-            let map = {};
-            for(let i = 0; i < state.allElemSettings.length; i++){
-                map[i] = state.allElemSettings[i];
-            }
-            console.log('     @@@@@@@@   MAPA ', map);
-            return map;
-        },
-        getCurrentElem: (state, getters) => (id, prop) => {
-            // mapa for elem prop
-
-            return _.filter(getters.allElemSettingsMap, // TODO Lodash
-                function(o) {
-                return o.id === id && o[prop];
-            })[0];
-        },
-        getBackElement(state) {
-            return state.allElemSettings[state.allElemSettings.length - state.currentLength]
-        },
-        getAllElemSettingsLength(state) {
+        getElemSettingsLength(state) {
             return state.allElemSettings.length;
         },
-        getSaveActions(state) {
-            return state.currElemSettings;
+        getCounter(state) {
+            return state.counter;
         },
-
+        getReadElemColor(state) {
+            return state.elemColor;
+        },
+        getReadElemWidth(state) {
+            return state.elemWidth;
+        },
+        getCurrentElement(state) {
+            return state.currentEl;
+        },
+        getBtnIsDisabled(state) {
+            return {
+                next: state.isDisabledNext,
+                back: state.isDisabledBack,
+            }
+        },
     },
     mutations: {
-        setCurrentLength(state, payload) {
-            if (payload === 'back') {
-                if(state.countElement === state.allElemSettings.length && state.currentLength !== 0) {
-                    state.currentLength = 0;
-                }
-                state.currentLength += 1;
-            }
-            if (payload === 'next') {
-                state.currentLength = state.currentLength >= state.countElement ? state.currentLength-- :
-                    state.currentLength < 2 ? state.currentLength : --state.currentLength;
+        setElemSettings(state, payload) {
+            if (payload.newValue && payload.oldValue) {
+                state.allElemSettings.push(payload);
+                state.counter = state.allElemSettings.length;
             }
         },
-        // setSaveActions(state, currElem) {
-        //     state.currElemSettings.push(currElem)
-        // },
+        setSaveElemSettings(state, payload) {// get for next or back
+            if (payload === 'back') {
+                state.currentEl = state.allElemSettings[state.counter];
+                let newValue = state.currentEl.newValue;
+                state.currentEl.newValue = state.currentEl.oldValue;
+                state.currentEl.oldValue = newValue;
+            }
+            if (payload === 'next') {
+                state.currentEl = state.allElemSettings[state.counter];
+                let oldValue = state.currentEl.oldValue;
+                state.currentEl.oldValue = state.currentEl.newValue;
+                state.currentEl.newValue = oldValue;
+            }
+        },
+        setCurrentElem(state, payload) {
+            if (payload === 'back') {
+               state.counter -= 1;
+            }
+            if (payload === 'next') {
+                state.counter += 1;
+            }
+        },
+        setElements(state, payload) {
+            if (payload.field === 'color') {
+                state.elemColor = payload;
+            }
+            if (payload.field === 'width') {
+                state.elemWidth = payload;
+            }
+            state.isDisabledNext = state.counter >= state.allElemSettings.length;
+            state.isDisabledBack = state.counter === 0;
+        },
+        replaceElement(state) {
+            state.allElemSettings.splice(state.counter, state.allElemSettings.length - state.counter);
+        },
         loadSettings(state, data) {
             state.settings = data;
         },
-        replaceElement(state) {
-            state.allElemSettings.splice(state.countElement, 1);
-            // state.currentLength = 0;
-        },
-        setElemSettings(state, payload) {
-            state.countElement++;
-            state.allElemSettings.push(payload);
-            payload.width ? state.currentElemWidth = payload : state.currentElemColor = payload;
-        },
-        setCurrentElemColor(state, payload) {
-            return state.currentElemColor = payload;
-        },
-        setCurrentElemWidth(state, payload) {
-            return state.currentElemWidth = payload;
-        },
-        decrement(state) {
-            state.countElement = state.countElement >= 3 ? state.countElement -1 : state.countElement;
-            console.log(' --- stor  decrement ', state.countElement)
-        },
-        increment(state) {
-            state.countElement = state.countElement + 1 > state.allElemSettings.length ? state.countElement : state.countElement+1;
-            console.log(' +++ stor  increment ', state.countElement)
-        },
     },
     actions: {
-        replaceElement(store) {
-            store.commit('replaceElement');
+        setElements(store, newElement) {
+            store.commit('setElements', newElement);
         },
-        setCurrentElemColor(store, newElement) {
-            store.commit('setCurrentElemColor', newElement);
-        },
-        setCurrentElemWidth(store, newElement) {
-            store.commit('setCurrentElemWidth', newElement);
-        },
-        // setSaveActions(store, newElement) {
-        //     store.commit('setSaveActions', newElement);
-        // },
-        setCurrentLength(store, count) {
-            store.commit('setCurrentLength', count);
-        },
-        loadSettings(store) {
-            store.commit('loadSettings', loadSettings());
+        setSaveElemSettings(store, newElement) {
+            store.commit('setSaveElemSettings', newElement);
         },
         setElemSettings(store, newSettings) {
             store.commit('setElemSettings', newSettings);
         },
-        decrement(store) {
-            store.commit('decrement');
+        replaceElement(store) {
+            store.commit('replaceElement');
         },
-        increment(store) {
-            store.commit('increment');
+        setCurrentElem(store, count) {
+            store.commit('setCurrentElem', count);
+        },
+        loadSettings(store) {
+            store.commit('loadSettings', loadSettings());
         },
     },
 };
@@ -153,9 +133,9 @@ function loadSettings() {
             url: '/site',
             elements: [
                 { id: 0, text: 'Ширина кнопки', slider: true, defWidth: '15' },
-                { id: 1, text: 'Навигация слайдера', cPicker: true, defColor: '#62e742' },
-                { id: 2, fonts: ['Arial', 'Monaco'] },
-                //{ id: 3, text: 'Навигация слайдера 1', cPicker: true, defColor: '#e7df39' }, //cyan
+                // { id: 1, text: 'Ширина кнопки 1', slider: true, defWidth: '50' },
+                { id: 2, text: 'Навигация слайдера', cPicker: true, defColor: '#62e742' },
+                // { id: 3, text: 'Навигация слайдера 1', cPicker: true, defColor: '#0ee7df' },
             ],
         },
         {
