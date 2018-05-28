@@ -1,13 +1,12 @@
 <template>
     <div>
         <v-flex xs4>
-            <!--<v-btn color="orange darken-2"-->
-                   <!--dark-->
-
-            <!--&gt;-->
-                <!--&lt;!&ndash;<router-link :to="{name: 'editor'}">Start from main page</router-link>&ndash;&gt;-->
-                <!--<v-icon dark left>arrow_back</v-icon>Back-->
-            <!--</v-btn>-->
+            <v-btn color="warning"
+                @click="clearChanges"
+                :disabled="isDisabledClear"
+            >
+                Clear
+            </v-btn>
 
             <v-btn flat icon
                    color="blue lighten-2"
@@ -48,7 +47,6 @@
 
 <script>
     import { mapGetters } from 'vuex';
-    // import { mapActions } from 'vuex';
 
     import Slider from './EditorComponents/Slider';
     import ColorPicker from './EditorComponents/ColorPicker';
@@ -63,7 +61,8 @@
         computed: {
             ...mapGetters('editor', {
                 currentElem: 'getCurrentElement',
-                isDisabledBtn: 'getBtnIsDisabled',
+                isDisabledBtn: 'getIsDisabledBtn',
+                isDisabledClear: 'getIsDisabledClear',
             }),
         },
         methods: {
@@ -78,6 +77,12 @@
 
                 this.$store.dispatch('editor/setCurrentElem', 'next');
                 this.$store.dispatch('editor/setElements', this.currentElem);
+            },
+            clearChanges() {
+                this.$store.dispatch('editor/clearAllElemSettings');
+                this.$store.dispatch('editor/setElements',
+                    this.$store.getters['editor/elemSettings'](2) // TODO fix get cPicker
+                );
             },
         },
         data() {

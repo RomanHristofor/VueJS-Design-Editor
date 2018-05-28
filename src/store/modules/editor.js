@@ -2,7 +2,6 @@ export default {
     namespaced: true,
     state: {
         settings: [],
-
         allElemSettings: [],
         elemWidth: {},
         elemColor: {},
@@ -10,6 +9,7 @@ export default {
         counter: 0,
         isDisabledNext: true,
         isDisabledBack: true,
+        isDisabledClear: true,
     },
     getters: {
         settings(state) {
@@ -49,11 +49,14 @@ export default {
         getCurrentElement(state) {
             return state.currentEl;
         },
-        getBtnIsDisabled(state) {
+        getIsDisabledBtn(state) {
             return {
                 next: state.isDisabledNext,
                 back: state.isDisabledBack,
             }
+        },
+        getIsDisabledClear(state) {
+            return state.isDisabledClear;
         },
     },
     mutations: {
@@ -92,11 +95,26 @@ export default {
             if (payload.field === 'width') {
                 state.elemWidth = payload;
             }
+            if (payload.cPicker) {
+                state.elemWidth = {};
+                state.elemColor = {
+                    id: payload.id,
+                    field: 'color',
+                    newValue: payload.defColor,
+                    oldValue: undefined
+                };
+            }
             state.isDisabledNext = state.counter >= state.allElemSettings.length;
             state.isDisabledBack = state.counter === 0;
+            state.isDisabledClear = state.allElemSettings.length === 0;
         },
         replaceElement(state) {
             state.allElemSettings.splice(state.counter, state.allElemSettings.length - state.counter);
+        },
+        clearAllElemSettings(state) {
+            state.allElemSettings = [];
+            state.allElemSettings.length = 0;
+            state.counter = 0;
         },
         loadSettings(state, data) {
             state.settings = data;
@@ -114,6 +132,9 @@ export default {
         },
         replaceElement(store) {
             store.commit('replaceElement');
+        },
+        clearAllElemSettings(store) {
+            store.commit('clearAllElemSettings');
         },
         setCurrentElem(store, count) {
             store.commit('setCurrentElem', count);

@@ -16,7 +16,6 @@
 </template>
 
 <script>
-    // import { mapActions } from 'vuex';
     import { mapGetters } from 'vuex';
 
     export default {
@@ -33,8 +32,8 @@
         },
         computed: {
             ...mapGetters('editor', {
-                elemWidth: 'getReadElemWidth',
-                counter: 'getCounter',
+                elemWidth : 'getReadElemWidth',
+                counter   : 'getCounter',
                 elemLength: 'getElemSettingsLength',
             }),
         },

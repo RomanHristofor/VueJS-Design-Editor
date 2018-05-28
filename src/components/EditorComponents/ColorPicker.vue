@@ -17,7 +17,6 @@
 
 <script>
     import { mapGetters } from 'vuex';
-    import { mapActions } from 'vuex';
 
     export default {
         name: 'ColorPicker',
@@ -33,8 +32,8 @@
         },
         computed: {
             ...mapGetters('editor', {
-                elemColor: 'getReadElemColor',
-                counter: 'getCounter',
+                elemColor : 'getReadElemColor',
+                counter   : 'getCounter',
                 elemLength: 'getElemSettingsLength',
             }),
         },
