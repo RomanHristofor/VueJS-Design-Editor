@@ -2,12 +2,14 @@ export default {
     namespaced: true,
     state: {
         settings: [],
-
         allElemSettings: [],
-        currentElemWidth: {},
-        currentElemColor: {},
-        currentLength: 0,
+        elemWidth: {},
+        elemColor: {},
+        currentEl: {},
         counter: 0,
+        isDisabledNext: true,
+        isDisabledBack: true,
+        isDisabledClear: true,
     },
     getters: {
         settings(state) {
@@ -32,114 +34,113 @@ export default {
         elemSettings: (state, getters) => (id) => {
             return getters.elementsMap[id];
         },
-        getCurrentElemWidth(state) {
-            return state.currentElemWidth;
-        },
-        getCurrentElemColor(state) {
-            return state.currentElemColor;
-        },
-        getCountElement(state) {
-            return state.counter;
-        },
-        getAllElemSettingsLength(state) {
+        getElemSettingsLength(state) {
             return state.allElemSettings.length;
         },
-        allElemSettingsMap(state) {
-            let map = {};
-            for(let i = 0; i < state.allElemSettings.length; i++){
-                map[i] = state.allElemSettings[i];
+        getCounter(state) {
+            return state.counter;
+        },
+        getReadElemColor(state) {
+            return state.elemColor;
+        },
+        getReadElemWidth(state) {
+            return state.elemWidth;
+        },
+        getCurrentElement(state) {
+            return state.currentEl;
+        },
+        getIsDisabledBtn(state) {
+            return {
+                next: state.isDisabledNext,
+                back: state.isDisabledBack,
             }
-            // console.log('     @@@@@@@@   MAPA ', map);
-            return map;
         },
-        getCurrentElem: (state, getters) => (id, prop) => {
-            // mapa for elem prop
-            return _.filter(getters.allElemSettingsMap, // TODO Lodash
-                function(o) {
-                    console.log( ' ++++++++  MAPA   ', o.id === id && o[prop] );
-                return o.id === id && o[prop];
-            })[0];
+        getIsDisabledClear(state) {
+            return state.isDisabledClear;
         },
-        getBackElement(state) {
-            return state.allElemSettings[state.allElemSettings.length - state.currentLength]
-        },
-
     },
     mutations: {
-        setCurrentLength(state, payload) {
+        setElemSettings(state, payload) {
+            if (payload.newValue && payload.oldValue) {
+                state.allElemSettings.push(payload);
+                state.counter = state.allElemSettings.length;
+            }
+        },
+        setSaveElemSettings(state, payload) {// get for next or back
             if (payload === 'back') {
-                if(state.counter === state.allElemSettings.length) {
-                    state.currentLength = 0;
-                }
-                state.currentLength += 1;
+                state.currentEl = state.allElemSettings[state.counter];
+                let newValue = state.currentEl.newValue;
+                state.currentEl.newValue = state.currentEl.oldValue;
+                state.currentEl.oldValue = newValue;
             }
             if (payload === 'next') {
-                if (state.allElemSettings.length - state.counter !== 0) {
-                    state.currentLength = state.allElemSettings.length - state.counter;
-                } else {
-                    state.currentLength -=1;
-                    // console.log('   @@@@@+++++++    next  ELSE  ', state.currentLength );
-                }
+                state.currentEl = state.allElemSettings[state.counter];
+                let oldValue = state.currentEl.oldValue;
+                state.currentEl.oldValue = state.currentEl.newValue;
+                state.currentEl.newValue = oldValue;
             }
         },
-        setElemSettings(state, payload) {
-            state.counter++;
-            state.allElemSettings.push(payload);
-            payload.width ? state.currentElemWidth = payload : state.currentElemColor = payload;
+        setCurrentElem(state, payload) {
+            if (payload === 'back') {
+               state.counter -= 1;
+            }
+            if (payload === 'next') {
+                state.counter += 1;
+            }
         },
-        setCurrentElemColor(state, payload) {
-            return state.currentElemColor = payload;
+        setElements(state, payload) {
+            if (payload.field === 'color') {
+                state.elemColor = payload;
+            }
+            if (payload.field === 'width') {
+                state.elemWidth = payload;
+            }
+            if (payload.cPicker) {
+                state.elemWidth = {};
+                state.elemColor = {
+                    id: payload.id,
+                    field: 'color',
+                    newValue: payload.defColor,
+                    oldValue: undefined
+                };
+            }
+            state.isDisabledNext = state.counter >= state.allElemSettings.length;
+            state.isDisabledBack = state.counter === 0;
+            state.isDisabledClear = state.allElemSettings.length === 0;
         },
-        setCurrentElemWidth(state, payload) {
-            return state.currentElemWidth = payload;
+        replaceElement(state) {
+            state.allElemSettings.splice(state.counter, state.allElemSettings.length - state.counter);
         },
-        replaceElement(state, payload) {
-            state.allElemSettings.splice(state.counter, 1, payload);
-        },
-        clearToDefault(state) {
-            state.counter = 2;
-            state.allElemSettings.splice(state.counter, 2);
-            state.allElemSettings.length = 2
-        },
-        decrement(state) {
-            state.counter -= 1;
-            console.log(' --- stor  decrement ', state.counter , state.allElemSettings.length)
-        },
-        increment(state) {
-            state.counter += 1;
-            console.log(' +++ stor  increment ', state.counter)
+        clearAllElemSettings(state) {
+            state.allElemSettings = [];
+            state.allElemSettings.length = 0;
+            state.counter = 0;
         },
         loadSettings(state, data) {
             state.settings = data;
         },
     },
     actions: {
-        clearToDefault(store) {
-            store.commit('clearToDefault');
+        setElements(store, newElement) {
+            store.commit('setElements', newElement);
         },
-        replaceElement(store, newElement) {
-            store.commit('replaceElement', newElement);
-        },
-        setCurrentElemColor(store, newElement) {
-            store.commit('setCurrentElemColor', newElement);
-        },
-        setCurrentElemWidth(store, newElement) {
-            store.commit('setCurrentElemWidth', newElement);
-        },
-        setCurrentLength(store, count) {
-            store.commit('setCurrentLength', count);
-        },
-        loadSettings(store) {
-            store.commit('loadSettings', loadSettings());
+        setSaveElemSettings(store, newElement) {
+            store.commit('setSaveElemSettings', newElement);
         },
         setElemSettings(store, newSettings) {
             store.commit('setElemSettings', newSettings);
         },
-        decrement(store) {
-            store.commit('decrement');
+        replaceElement(store) {
+            store.commit('replaceElement');
         },
-        increment(store) {
-            store.commit('increment');
+        clearAllElemSettings(store) {
+            store.commit('clearAllElemSettings');
+        },
+        setCurrentElem(store, count) {
+            store.commit('setCurrentElem', count);
+        },
+        loadSettings(store) {
+            store.commit('loadSettings', loadSettings());
         },
     },
 };
@@ -153,9 +154,9 @@ function loadSettings() {
             url: '/site',
             elements: [
                 { id: 0, text: 'Ширина кнопки', slider: true, defWidth: '15' },
-                { id: 1, text: 'Навигация слайдера', cPicker: true, defColor: '#62e742' },
-                { id: 2, fonts: ['Arial', 'Monaco'] },
-                //{ id: 3, text: 'Навигация слайдера 1', cPicker: true, defColor: '#e7df39' }, //cyan
+                // { id: 1, text: 'Ширина кнопки 1', slider: true, defWidth: '50' },
+                { id: 2, text: 'Навигация слайдера', cPicker: true, defColor: '#62e742' },
+                // { id: 3, text: 'Навигация слайдера 1', cPicker: true, defColor: '#0ee7df' },
             ],
         },
         {

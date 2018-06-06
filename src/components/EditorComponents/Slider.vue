@@ -4,9 +4,9 @@
             {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-            <!--@{{currAction}}@-->
+            <!--@{{elemWidth.newValue}}@-->
             <v-slider
-                :value="elemWidth.width"
+                :value="elemWidth.newValue"
                 step="0"
                 @input="setWidth($event)"
             />
@@ -16,50 +16,47 @@
 </template>
 
 <script>
-    // import { mapActions } from 'vuex';
     import { mapGetters } from 'vuex';
 
     export default {
         name: 'Slider',
-        props: ['settings'],
+        props: ['settings', 'id'],
+        created() {
+            let elemSettings = {
+                id: this.id,
+                field: 'width',
+                newValue: this.elemWidth.newValue || +this.settings.defWidth,
+                oldValue: +this.settings.defWidth
+            };
+            this.$store.dispatch('editor/setElements', elemSettings);
+        },
         computed: {
             ...mapGetters('editor', {
-                elemWidth: 'getCurrentElemWidth',
-                count: 'getCountElement',
-                len: 'getAllElemSettingsLength',
-                lastElement: 'getBackElement',
+                elemWidth : 'getReadElemWidth',
+                counter   : 'getCounter',
+                elemLength: 'getElemSettingsLength',
             }),
         },
         methods: {
             setWidth(newWidth) {
-                if (this.count < this.len && this.lastElement) {
+                // if( !Number.isNaN( newWidth ))
+                let elemSettings = {
+                    id: this.id,
+                    field: 'width',
+                    newValue: parseInt(newWidth, 10) || +this.settings.defWidth,
+                    oldValue: this.elemWidth.newValue
+                };
 
-                    let newElem = {id: this.i, width: parseInt(newWidth, 10)};
-
-                    this.$store.dispatch('editor/replaceElement', newElem);
-                    this.$store.dispatch('editor/setCurrentElemWidth', newElem);
-
-                } else {
-                    // TODO check is NaN  - if( !Number.isNaN( newWidth ))
-                    newWidth = newWidth || +this.settings.defWidth;
-
-                    let elemSettings = {id: ++this.i, width: parseInt(newWidth, 10)};
-                    this.$store.dispatch('editor/setElemSettings', elemSettings);
+                if (this.counter < this.elemLength) {
+                    this.$store.dispatch('editor/replaceElement', elemSettings);
                 }
 
-                this.disabledBtn(newWidth);
+                this.$store.dispatch('editor/setElemSettings', elemSettings);
+                this.$store.dispatch('editor/setElements', elemSettings);
             },
-            disabledBtn(v) {
-                this.$emit('btn-disabled', {
-                    next: this.len === this.count,
-                    back: v === +this.settings.defWidth // TODO fix typing
-                });
-            }
         },
         data() {
-            return {
-                i: 0,
-            };
+            return {};
         },
     };
 </script>

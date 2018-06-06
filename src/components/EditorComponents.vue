@@ -1,24 +1,17 @@
 <template>
     <div>
         <v-flex xs4>
-            <!--<v-btn color="orange darken-2"-->
-                   <!--dark-->
-
-            <!--&gt;-->
-                <!--&lt;!&ndash;<router-link :to="{name: 'editor'}">Start from main page</router-link>&ndash;&gt;-->
-                <!--<v-icon dark left>arrow_back</v-icon>Back-->
-            <!--</v-btn>-->
             <v-btn color="warning"
-                   :disabled="isDisabledClearBtn"
-                   @click="clearChanges"
-                >
+                @click="clearChanges"
+                :disabled="isDisabledClear"
+            >
                 Clear
             </v-btn>
 
             <v-btn flat icon
                    color="blue lighten-2"
                    @click="next"
-                   :disabled="isDisabledNext"
+                   :disabled="isDisabledBtn.next"
             >
                 <v-icon>thumb_up</v-icon>
             </v-btn>
@@ -26,12 +19,11 @@
             <v-btn flat icon
                    color="red lighten-2"
                    @click="back"
-                   :disabled="isDisabledBack"
+                   :disabled="isDisabledBtn.back"
             >
                 <v-icon>thumb_down</v-icon>
             </v-btn>
             <v-subheader></v-subheader>
-             <!--len @{{allElemSettingsLength}}@-->
 
             <v-subheader></v-subheader>
         </v-flex>
@@ -41,12 +33,12 @@
         >
             <slider v-if="item.slider"
                 :settings="item"
-                @btn-disabled="btnDisabled"
+                :id="item.id"
             />
 
             <color-picker v-if="item.cPicker"
                 :settings="item"
-                @btn-disabled="btnDisabled"
+                :id="item.id"
             />
 
         </v-list-tile>
@@ -55,7 +47,6 @@
 
 <script>
     import { mapGetters } from 'vuex';
-    // import { mapActions } from 'vuex';
 
     import Slider from './EditorComponents/Slider';
     import ColorPicker from './EditorComponents/ColorPicker';
@@ -69,90 +60,33 @@
         },
         computed: {
             ...mapGetters('editor', {
-                count: 'getCountElement',
-                lastElement: 'getBackElement',
-                allElemSettingsLength: 'getAllElemSettingsLength',
+                currentElem: 'getCurrentElement',
+                isDisabledBtn: 'getIsDisabledBtn',
+                isDisabledClear: 'getIsDisabledClear',
             }),
         },
         methods: {
             back() {
-                this.$store.dispatch('editor/setCurrentLength', 'back');
-                console.log( '  $$%%%$$$$   back --- lastElement    ', this.lastElement);
+                this.$store.dispatch('editor/setCurrentElem', 'back');
 
-                if (this.lastElement.color) {
-                    this.$store.dispatch('editor/decrement');
-
-                    this.$store.dispatch(
-                        'editor/setCurrentElemColor',
-                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id-1, 'color')
-                    );
-                }
-
-                if (this.lastElement.width >= 0) {
-                    this.$store.dispatch('editor/decrement');
-
-                    this.$store.dispatch(
-                        'editor/setCurrentElemWidth',
-                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id-1, 'width')
-                    );
-                }
-
-                this.isDisabled();
+                this.$store.dispatch('editor/setSaveElemSettings', 'back');
+                this.$store.dispatch('editor/setElements', this.currentElem);
             },
             next() {
-                this.$store.dispatch('editor/setCurrentLength', 'next');
+                this.$store.dispatch('editor/setSaveElemSettings', 'next');
 
-                console.log( '  $$%%%$$$$   next --- lastElement    ', this.lastElement);
-
-                if (this.lastElement.color) {
-                    this.$store.dispatch('editor/increment');
-
-                    this.$store.dispatch(
-                        'editor/setCurrentElemColor',
-                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id, 'color')
-                    );
-                }
-
-                if (this.lastElement.width >= 0) {
-                    this.$store.dispatch('editor/increment');
-
-                    this.$store.dispatch(
-                        'editor/setCurrentElemWidth',
-                        this.$store.getters['editor/getCurrentElem'](this.lastElement.id, 'width')
-                    );
-                }
-
-                this.isDisabled();
-            },
-            isDisabled() {
-                this.isDisabledNext = this.count >= this.allElemSettingsLength;
-                this.isDisabledBack = this.count <= 2;
-            },
-            btnDisabled(btnIsDisabled) {
-                this.isDisabledBack = btnIsDisabled.back;
-                this.isDisabledNext = btnIsDisabled.next;
-                this.isDisabledClearBtn = this.count === 2;
+                this.$store.dispatch('editor/setCurrentElem', 'next');
+                this.$store.dispatch('editor/setElements', this.currentElem);
             },
             clearChanges() {
-                this.$store.dispatch('editor/clearToDefault');
-                this.isDisabledClearBtn = this.count === this.allElemSettingsLength;
-                this.$store.dispatch(
-                    'editor/setCurrentElemColor',
-                    this.$store.getters['editor/getCurrentElem'](1, 'color')
+                this.$store.dispatch('editor/clearAllElemSettings');
+                this.$store.dispatch('editor/setElements',
+                    this.$store.getters['editor/elemSettings'](2) // TODO fix get cPicker
                 );
-                this.$store.dispatch(
-                    'editor/setCurrentElemWidth',
-                    this.$store.getters['editor/getCurrentElem'](1, 'width')
-                );
-                this.isDisabled();
-            }
+            },
         },
         data() {
-            return {
-                isDisabledBack: true,
-                isDisabledNext: true,
-                isDisabledClearBtn: true,
-            };
+            return {};
         },
     };
 </script>
