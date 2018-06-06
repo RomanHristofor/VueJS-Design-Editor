@@ -6,7 +6,7 @@
         <v-list-tile-content>
             <!--@{{elemColor.newValue}}@-->
             <el-color-picker
-                :value="elemColor.newValue"
+                :value="currentValue"
                 @change="setColor($event)"
                 size="mini"
             />
@@ -22,28 +22,26 @@
         name: 'ColorPicker',
         props: ['settings', 'id'],
         created() {
-            let elemSettings = {
-                id: this.id,
-                field: 'color',
-                newValue: this.elemColor.newValue || this.settings.defColor,
-                oldValue: this.settings.defColor
-            };
-            this.$store.dispatch('editor/setElements', elemSettings);
+            this.$store.dispatch('editor/setCurrentElemSettings', {
+                id: this.id, field: 'cPicker', newValue: this.settings.defColor,
+            });
         },
         computed: {
             ...mapGetters('editor', {
-                elemColor : 'getReadElemColor',
                 counter   : 'getCounter',
                 elemLength: 'getElemSettingsLength',
             }),
+            currentValue() {
+                return this.$store.getters['editor/getCurrentElemSettings'](this.id).newValue;
+            }
         },
         methods: {
             setColor(newColor) {
                 let elemSettings = {
                     id: this.id,
-                    field: 'color',
-                    newValue: newColor || this.settings.defColor,
-                    oldValue: this.elemColor.newValue
+                    field: 'cPicker',
+                    newValue: newColor,
+                    oldValue: this.currentValue || this.settings.defColor
                 };
 
                 if (this.counter < this.elemLength) {
@@ -51,10 +49,14 @@
                 }
 
                 this.$store.dispatch('editor/setElemSettings', elemSettings);
-                this.$store.dispatch('editor/setElements', elemSettings);
+                this.$store.dispatch('editor/isDisabledBtn');
+
+                this.$store.dispatch('editor/setCurrentElemSettings', {
+                    id: this.id, field: 'cPicker', newValue: newColor
+                });
             },
         },
-        data() {
+        data: () => {
             return {};
         },
     }

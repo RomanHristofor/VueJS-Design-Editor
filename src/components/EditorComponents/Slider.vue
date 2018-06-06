@@ -4,9 +4,9 @@
             {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-            <!--@{{elemWidth.newValue}}@-->
+            <!--@{{v}}@-->
             <v-slider
-                :value="elemWidth.newValue"
+                :value="currentValue"
                 step="0"
                 @input="setWidth($event)"
             />
@@ -22,29 +22,26 @@
         name: 'Slider',
         props: ['settings', 'id'],
         created() {
-            let elemSettings = {
-                id: this.id,
-                field: 'width',
-                newValue: this.elemWidth.newValue || +this.settings.defWidth,
-                oldValue: +this.settings.defWidth
-            };
-            this.$store.dispatch('editor/setElements', elemSettings);
+            this.$store.dispatch('editor/setCurrentElemSettings', {
+                id: this.id, field: 'slider', newValue: this.settings.defWidth
+            });
         },
         computed: {
             ...mapGetters('editor', {
-                elemWidth : 'getReadElemWidth',
                 counter   : 'getCounter',
                 elemLength: 'getElemSettingsLength',
             }),
+            currentValue() {
+                return this.$store.getters['editor/getCurrentElemSettings'](this.id).newValue;
+            }
         },
         methods: {
             setWidth(newWidth) {
-                // if( !Number.isNaN( newWidth ))
                 let elemSettings = {
                     id: this.id,
-                    field: 'width',
-                    newValue: parseInt(newWidth, 10) || +this.settings.defWidth,
-                    oldValue: this.elemWidth.newValue
+                    field: 'slider',
+                    newValue: parseInt(newWidth, 10),
+                    oldValue: this.currentValue || this.settings.defWidth
                 };
 
                 if (this.counter < this.elemLength) {
@@ -52,10 +49,14 @@
                 }
 
                 this.$store.dispatch('editor/setElemSettings', elemSettings);
-                this.$store.dispatch('editor/setElements', elemSettings);
+                this.$store.dispatch('editor/isDisabledBtn');
+
+                this.$store.dispatch('editor/setCurrentElemSettings', {
+                    id: this.id, field: 'slider', newValue: parseInt(newWidth, 10)
+                });
             },
         },
-        data() {
+        data: () => {
             return {};
         },
     };

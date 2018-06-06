@@ -4,11 +4,13 @@ export default {
         items: [
             {
                 url: '/',
-                text: 'Hello World'
+                icon: 'home',
+                text: 'General Settings'
             },
             {
                 url: '/site',
-                text: 'Site',
+                icon: 'bubble_chart',
+                text: 'Design Editor',
             },
         ],
     },

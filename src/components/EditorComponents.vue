@@ -2,7 +2,7 @@
     <div>
         <v-flex xs4>
             <v-btn color="warning"
-                @click="clearChanges"
+                @click="clearChanges('clear')"
                 :disabled="isDisabledClear"
             >
                 Clear
@@ -31,12 +31,14 @@
         <v-list-tile
             v-for="(item, i) in elements"
         >
-            <slider v-if="item.slider"
+            <slider
+                v-if="item.slider"
                 :settings="item"
                 :id="item.id"
             />
 
-            <color-picker v-if="item.cPicker"
+            <color-picker
+                v-if="item.cPicker"
                 :settings="item"
                 :id="item.id"
             />
@@ -46,7 +48,7 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
 
     import Slider from './EditorComponents/Slider';
     import ColorPicker from './EditorComponents/ColorPicker';
@@ -60,7 +62,6 @@
         },
         computed: {
             ...mapGetters('editor', {
-                currentElem: 'getCurrentElement',
                 isDisabledBtn: 'getIsDisabledBtn',
                 isDisabledClear: 'getIsDisabledClear',
             }),
@@ -70,20 +71,17 @@
                 this.$store.dispatch('editor/setCurrentElem', 'back');
 
                 this.$store.dispatch('editor/setSaveElemSettings', 'back');
-                this.$store.dispatch('editor/setElements', this.currentElem);
+                this.$store.dispatch('editor/isDisabledBtn');
             },
             next() {
                 this.$store.dispatch('editor/setSaveElemSettings', 'next');
 
                 this.$store.dispatch('editor/setCurrentElem', 'next');
-                this.$store.dispatch('editor/setElements', this.currentElem);
+                this.$store.dispatch('editor/isDisabledBtn');
             },
-            clearChanges() {
-                this.$store.dispatch('editor/clearAllElemSettings');
-                this.$store.dispatch('editor/setElements',
-                    this.$store.getters['editor/elemSettings'](2) // TODO fix get cPicker
-                );
-            },
+            ...mapActions('editor', {
+                clearChanges: 'isDisabledBtn',
+            })
         },
         data() {
             return {};
@@ -91,6 +89,10 @@
     };
 </script>
 
-<style scoped>
+<style >
+
+    .list__tile {
+        margin-bottom: 50px;
+    }
 
 </style>

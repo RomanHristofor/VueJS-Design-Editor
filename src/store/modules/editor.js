@@ -3,9 +3,8 @@ export default {
     state: {
         settings: [],
         allElemSettings: [],
-        elemWidth: {},
-        elemColor: {},
-        currentEl: {},
+        currentElemSettings: [],
+        defaultElemSettings: [],
         counter: 0,
         isDisabledNext: true,
         isDisabledBack: true,
@@ -40,15 +39,6 @@ export default {
         getCounter(state) {
             return state.counter;
         },
-        getReadElemColor(state) {
-            return state.elemColor;
-        },
-        getReadElemWidth(state) {
-            return state.elemWidth;
-        },
-        getCurrentElement(state) {
-            return state.currentEl;
-        },
         getIsDisabledBtn(state) {
             return {
                 next: state.isDisabledNext,
@@ -58,27 +48,52 @@ export default {
         getIsDisabledClear(state) {
             return state.isDisabledClear;
         },
+        getElemSettings(state) {
+            return state.currentElemSettings;
+        },
+        getCurrentElemSettings: state => (id) => {
+            return state.currentElemSettings.find(item => item.id === id);
+        },
     },
     mutations: {
+        setCurrentElemSettings(state, payload) {
+            if (!state.currentElemSettings.find(item => item.id === payload.id)) {
+                state.currentElemSettings.push(payload);
+            }
+            else {
+                let i = _.findIndex(state.currentElemSettings, (o) => {
+                    return o.id === payload.id;
+                });
+                state.currentElemSettings.splice(i, 1, payload);
+            }
+        },
         setElemSettings(state, payload) {
+            if (state.allElemSettings.length === 0) {
+                state.defaultElemSettings = _.cloneDeep(state.currentElemSettings);
+            }
             if (payload.newValue && payload.oldValue) {
                 state.allElemSettings.push(payload);
                 state.counter = state.allElemSettings.length;
             }
         },
         setSaveElemSettings(state, payload) {// get for next or back
+            let currentEl = {};
             if (payload === 'back') {
-                state.currentEl = state.allElemSettings[state.counter];
-                let newValue = state.currentEl.newValue;
-                state.currentEl.newValue = state.currentEl.oldValue;
-                state.currentEl.oldValue = newValue;
+                currentEl = state.allElemSettings[state.counter];
+                let newValue = currentEl.newValue;
+                currentEl.newValue = currentEl.oldValue;
+                currentEl.oldValue = newValue;
             }
             if (payload === 'next') {
-                state.currentEl = state.allElemSettings[state.counter];
-                let oldValue = state.currentEl.oldValue;
-                state.currentEl.oldValue = state.currentEl.newValue;
-                state.currentEl.newValue = oldValue;
+                currentEl = state.allElemSettings[state.counter];
+                let oldValue = currentEl.oldValue;
+                currentEl.oldValue = currentEl.newValue;
+                currentEl.newValue = oldValue;
             }
+            let i = _.findIndex(state.currentElemSettings, function(o) {
+                return o.id === currentEl.id;
+            });
+            state.currentElemSettings.splice(i, 1, currentEl);
         },
         setCurrentElem(state, payload) {
             if (payload === 'back') {
@@ -88,21 +103,13 @@ export default {
                 state.counter += 1;
             }
         },
-        setElements(state, payload) {
-            if (payload.field === 'color') {
-                state.elemColor = payload;
-            }
-            if (payload.field === 'width') {
-                state.elemWidth = payload;
-            }
-            if (payload.cPicker) {
-                state.elemWidth = {};
-                state.elemColor = {
-                    id: payload.id,
-                    field: 'color',
-                    newValue: payload.defColor,
-                    oldValue: undefined
-                };
+        isDisabledBtn(state, payload) {
+            if (payload === 'clear') {
+                state.allElemSettings = [];
+                state.allElemSettings.length = 0;
+                state.counter = 0;
+
+                state.currentElemSettings = state.defaultElemSettings;
             }
             state.isDisabledNext = state.counter >= state.allElemSettings.length;
             state.isDisabledBack = state.counter === 0;
@@ -111,18 +118,13 @@ export default {
         replaceElement(state) {
             state.allElemSettings.splice(state.counter, state.allElemSettings.length - state.counter);
         },
-        clearAllElemSettings(state) {
-            state.allElemSettings = [];
-            state.allElemSettings.length = 0;
-            state.counter = 0;
-        },
         loadSettings(state, data) {
             state.settings = data;
         },
     },
     actions: {
-        setElements(store, newElement) {
-            store.commit('setElements', newElement);
+        isDisabledBtn(store, newElement) {
+            store.commit('isDisabledBtn', newElement);
         },
         setSaveElemSettings(store, newElement) {
             store.commit('setSaveElemSettings', newElement);
@@ -133,8 +135,8 @@ export default {
         replaceElement(store) {
             store.commit('replaceElement');
         },
-        clearAllElemSettings(store) {
-            store.commit('clearAllElemSettings');
+        setCurrentElemSettings(store, newElement) {
+            store.commit('setCurrentElemSettings', newElement);
         },
         setCurrentElem(store, count) {
             store.commit('setCurrentElem', count);
@@ -153,10 +155,10 @@ function loadSettings() {
             page: 'site',
             url: '/site',
             elements: [
-                { id: 0, text: 'Ширина кнопки', slider: true, defWidth: '15' },
-                // { id: 1, text: 'Ширина кнопки 1', slider: true, defWidth: '50' },
-                { id: 2, text: 'Навигация слайдера', cPicker: true, defColor: '#62e742' },
-                // { id: 3, text: 'Навигация слайдера 1', cPicker: true, defColor: '#0ee7df' },
+                { id: 0, text: 'Слайдер', cPicker: true, defColor: '#62e742' },
+                { id: 1, text: 'Ширина кнопки', slider: true, defWidth: 50 },
+                { id: 2, text: 'Ширина кнопки 1', slider: true, defWidth: 15 },
+                { id: 3, text: 'Слайдер 1', cPicker: true, defColor: '#0ee7df' },
             ],
         },
         {

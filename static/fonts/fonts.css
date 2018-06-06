@@ -1,0 +1,61 @@
+/*@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons);*/
+
+/*@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic,700italic);*/
+
+@font-face {
+    font-family: "Roboto Italic";
+    src: url('./Roboto/Italic/Roboto-Italic.eot');
+    src: url('./Roboto/Italic/Roboto-Italic.eot?#iefix') format("embedded-opentype"),
+    url('./Roboto/Italic/Roboto-Italic.woff') format("woff"),
+    url('./Roboto/Italic/Roboto-Italic.ttf') format("truetype");
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url('./Roboto/Regular/Roboto-Regular.eot');
+    src: url('./Roboto/Regular/Roboto-Regular.eot?#iefix') format("embedded-opentype"),
+    url('./Roboto/Regular/Roboto-Regular.woff') format("woff"),
+    url('./Roboto/Regular/Roboto-Regular.ttf') format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inconsolata Regular";
+    src: url('./Inconsolata/Regular/Inconsolata-Regular.eot');
+    src: url('./Inconsolata/Regular/Inconsolata-Regular.eot?#iefix') format("embedded-opentype"),
+    url('./Inconsolata/Regular/Inconsolata-Regular.woff') format("woff"),
+    url('./Inconsolata/Regular/Inconsolata-Regular.ttf') format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Rubik";
+    src: url('./Rubik/Regular/Rubik-Regular.eot');
+    src: url('./Rubik/Regular/Rubik-Regular.eot?#iefix') format("embedded-opentype"),
+    url('./Rubik/Regular/Rubik-Regular.woff') format("woff"),
+    url('./Rubik/Regular/Rubik-Regular.ttf') format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+}
+
+.wf-rubik-n4-active em {
+    font-family: 'Inconsolata Regular';
+    font-size: 24px;
+}
+
+.wf-active body {
+    font-family: 'Montserrat';
+    font-size: 18px;
+}
+
+

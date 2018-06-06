@@ -14,16 +14,16 @@ export const router = new Router({
     routes: [
         {
             path: '',
-            redirect: { name: 'site' },
-        },
-        {
-            path: '/',
-            name: 'HelloWorld',
-            component: HelloWorld,
+            redirect: { name: 'home' },
         },
         {
             path: '*',
             component: E404,
+        },
+        {
+            path: '/',
+            name: 'home',
+            component: HelloWorld,
         },
         {
             path: '/blog',
