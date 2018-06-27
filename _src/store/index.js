@@ -11,7 +11,7 @@ Vue.use(Vuex);
 const debug = process.env.NODE_ENV !== 'production';
 export const store = new Vuex.Store({
     modules: {
-        // menu,
+        menu,
         editor,
     },
     strict: debug,

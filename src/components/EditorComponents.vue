@@ -1,32 +1,7 @@
 <template>
     <div>
-        <v-flex xs4>
-            <v-btn color="warning"
-                @click="clearChanges('clear')"
-                :disabled="isDisabledClear"
-            >
-                Clear
-            </v-btn>
 
-            <v-btn flat icon
-                   color="blue lighten-2"
-                   @click="next"
-                   :disabled="isDisabledBtn.next"
-            >
-                <v-icon>thumb_up</v-icon>
-            </v-btn>
-
-            <v-btn flat icon
-                   color="red lighten-2"
-                   @click="back"
-                   :disabled="isDisabledBtn.back"
-            >
-                <v-icon>thumb_down</v-icon>
-            </v-btn>
-            <v-subheader></v-subheader>
-
-            <v-subheader></v-subheader>
-        </v-flex>
+        <history />
 
         <v-list-tile
             v-for="(item, i) in elements"
@@ -37,8 +12,15 @@
                 :id="item.id"
             />
 
+            <fonts-select
+                v-if="item.fontSelect"
+                :settings="item"
+                :array="item.array"
+                :id="item.id"
+            />
+
             <color-picker
-                v-if="item.cPicker"
+                v-if="item.colorPicker"
                 :settings="item"
                 :id="item.id"
             />
@@ -48,41 +30,27 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex';
-
+    import History from './History';
     import Slider from './EditorComponents/Slider';
     import ColorPicker from './EditorComponents/ColorPicker';
+    import FontsSelect from './GeneralSettings/FontsSelect';
 
     export default {
         name: 'EditorComponents',
-        props: ['elements'], // TODO typing fix
+        props: {
+            elements: {
+                type: Array,
+                required: true
+            }
+        },
         components: {
+            History,
             Slider,
             ColorPicker,
+            FontsSelect,
         },
-        computed: {
-            ...mapGetters('editor', {
-                isDisabledBtn: 'getIsDisabledBtn',
-                isDisabledClear: 'getIsDisabledClear',
-            }),
-        },
-        methods: {
-            back() {
-                this.$store.dispatch('editor/setCurrentElem', 'back');
-
-                this.$store.dispatch('editor/setSaveElemSettings', 'back');
-                this.$store.dispatch('editor/isDisabledBtn');
-            },
-            next() {
-                this.$store.dispatch('editor/setSaveElemSettings', 'next');
-
-                this.$store.dispatch('editor/setCurrentElem', 'next');
-                this.$store.dispatch('editor/isDisabledBtn');
-            },
-            ...mapActions('editor', {
-                clearChanges: 'isDisabledBtn',
-            })
-        },
+        computed: {},
+        methods: {},
         data() {
             return {};
         },
@@ -90,9 +58,12 @@
 </script>
 
 <style >
+    .input-group {
+        padding-top: 28px;
+    }
 
     .list__tile {
-        margin-bottom: 50px;
+        margin-bottom: 50px !important;
     }
 
 </style>

@@ -22,14 +22,13 @@
                 </v-card>
             </v-tab-item>
         </v-tabs>
-
-        @{{settings.defColor}}@
-
+@{{settings.defColor}}@
     </div>
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex';
+//    import {mapGetters} from 'vuex';
+    import {mapActions} from 'vuex';
 
     export default {
         name: 'test',
@@ -38,6 +37,9 @@
             this.$store.dispatch('editor/loadSettings');
         },
         computed: {
+//            ...mapGetters('editor', {
+//                settings: 'settings'
+//            }),
             settings() {
                 return this.$store.getters['editor/elemSettings'](1);
             },

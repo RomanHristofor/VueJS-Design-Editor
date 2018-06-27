@@ -1,19 +1,23 @@
 <template>
-    <v-container fluid>
+    <!--<v-container fluid>-->
+    <div>
         <v-layout row wrap>
-            <v-flex xs12 sm6>
+            <v-flex xs12 >
+                <span class="demonstration">{{ settings.label }}</span>
                 <v-select
-                    label="Fonts"
-                    :items="fonts"
-                    v-model="v"
+                    :label="currentValue"
+                    :items="array"
+                    :value="currentValue"
                     item-text="name"
                     class="search ma-0"
-                    prepend-icon="search"
+                    :prepend-icon="settings.search"
                     clearable
                     solo
                     autocomplete
                     :style="fontFamily"
                     @input="setFontLoaded"
+                    @keyup.down="onSelectDownOrUp"
+                    @keyup.up="onSelectDownOrUp"
                 >
                     <template slot="item" scope="data">
                         <v-list-tile-content>
@@ -23,64 +27,92 @@
                 </v-select>
             </v-flex>
         </v-layout>
-    </v-container>
+    </div>
+    <!--</v-container>-->
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     import WebFontLoader from 'webfontloader';
 
     export default {
         name: "FontsSelect",
+        props: {
+            settings: {
+                type: Object,
+                required: true,
+            },
+            array: {
+                type: Array,
+                required: true,
+            },
+            id: {
+                type: Number,
+                required: true
+            }
+        },
         created() {
+            this.$store.dispatch('editor/setCurrentElemSettings', {
+                id: this.id, name: this.settings.name, newValue: this.settings.value,
+            });
             WebFontLoader.load({
                 google: {
                     families: this.family
                 },
             });
         },
+        computed: {
+            currentValue() {
+                return this.$store.getters['editor/getCurrentElemSettings'](this.id).newValue;
+            }
+        },
         methods: {
+            onSelectDownOrUp() {
+                if (this.settings.search && document.querySelector('.list__tile--highlighted')) {
+                    let currentItem = document.querySelector('.list__tile--highlighted').children[0].innerText;
+                    this.setFontLoaded({
+                        name: currentItem,
+                        font: `font-family: ${currentItem}`
+                    })
+                }
+            },
             setFontLoaded(e) {
-                this.fontFamily = e ? e.font : '';
-                WebFontLoader.load({
-                    custom: {
-                        families: [
-                            'Rubik:n4', // n - normal | i - italic | 1-7 - weight
-                            'Inconsolata Regular:n4',
-                            'Roboto:i4',
-                            'Montserrat:n4',
+                if (e) {
+                    if (e.font) {
+                        this.fontFamily = e.font;
+                        WebFontLoader.load({
+                            // 'Rubik:n4'  n - normal | i - italic | 1-7 - weight
+                            google: {
+                                families: [e.name]
+                            },
+                            // custom: {
+                            //     families: [
+                            //         e.name,
+                            //     ],
+                            //     urls: ['./static/fonts/fonts.css'],
+                            // },
+                        });
+                    }
 
-                        ],
-                        urls: ['./static/fonts/fonts.css'],
-                    },
-                });
+                    let elemSettings = {
+                        id: this.id,
+                        name: this.settings.name,
+                        newValue: e.name,
+                        oldValue: this.currentValue
+                    };
+
+                    this.$store.dispatch('editor/setElemSettings', elemSettings);
+                }
+
             },
         },
         data: () => {
             return {
-                v: [],
                 fontFamily: '',
-                fonts: [
-                    { name: 'Rubik', font: "font-family: Rubik" },
-                    { name: 'Inconsolata', font: "font-family: Inconsolata" },
-                    { name: 'Roboto', font: "font-family: Roboto" },
-                    { name: 'Montserrat', font: "font-family: Montserrat" },
-
-                    { name: 'ABeeZee', font: "font-family: ABeeZee" },
-                    { name: 'Abel', font: "font-family: Abel" },
-                    { name: 'Abril Fatface', font: "font-family: Abril Fatface" },
-                    { name: 'Aclonica', font: "font-family: Aclonica" },
-                    { name: 'Acme', font: "font-family: Acme" },
-
-                    { name: 'Actor', font: "font-family: Actor" },
-                    { name: 'Adamina', font: "font-family: Adamina" },
-                    { name: 'Advent Pro', font: "font-family: Advent Pro" },
-                    { name: 'Aguafina Script', font: "font-family: Aguafina Script" },
-
-                ],
                 family: [
-                    'Rubik', 'Inconsolata', 'Roboto', 'Montserrat',
+                    'Rubik', 'Inconsolata', 'Roboto', 'Montserrat', 'Pacifico',
                     'ABeeZee', 'Abel', 'Abril Fatface', 'Aclonica', 'Acme',
-                    'Actor', 'Adamina', 'Advent Pro','Aguafina Script',
+                    'Actor', 'Adamina', 'Advent Pro','Aguafina Script', 'Helvetica',
 
                     // 'Akronim', 'Aladin', 'Aldrich', 'Alef',
                     // 'Alegreya', 'Alegreya SC', 'Alegreya Sans',
@@ -97,6 +129,10 @@
 <style scoped>
     .input-group.input-group--solo {
         width: 250px;
+    }
+
+    .demonstration {
+        width: 100%;
     }
 
 </style>

@@ -1,13 +1,21 @@
 <template>
     <div>
         <v-list-tile-action>
-            {{ settings.text }}
+            {{ settings.label }}
         </v-list-tile-action>
         <v-list-tile-content>
-            <!--@{{v}}@-->
+            <v-switch
+                v-if="settings.units"
+                v-model="tile"
+                :label="changeUnits"
+            />
+
             <v-slider
                 :value="currentValue"
                 step="0"
+                :min="min"
+                :max="max"
+                thumb-label
                 @input="setWidth($event)"
             />
 
@@ -23,41 +31,58 @@
         props: ['settings', 'id'],
         created() {
             this.$store.dispatch('editor/setCurrentElemSettings', {
-                id: this.id, field: 'slider', newValue: this.settings.defWidth
+                id: this.id, name: this.settings.name, newValue: this.settings.defWidth
             });
         },
         computed: {
-            ...mapGetters('editor', {
-                counter   : 'getCounter',
-                elemLength: 'getElemSettingsLength',
-            }),
+            changeUnits() {
+                return this.dim = this.tile ? 'Px' : '%';
+            },
+            min() {
+                if (this.settings.units) {
+                    return this.tile ? this.settings.range.pixel.min : this.settings.range.percent.min;
+                } else {
+                    return this.settings.min;
+                }
+            },
+            max() {
+                if (this.settings.units) {
+                    return this.tile ? this.settings.range.pixel.max : this.settings.range.percent.max;
+                } else {
+                    return this.settings.max;
+                }
+            },
             currentValue() {
                 return this.$store.getters['editor/getCurrentElemSettings'](this.id).newValue;
             }
         },
         methods: {
-            setWidth(newWidth) {
+            setWidth: _.debounce(function(newWidth) {
+                if (this.settings.units) {
+                    if (newWidth === this.settings.range.pixel.min) {
+                        newWidth = this.settings.range.pixel.v;
+                    }
+                    if (newWidth === this.settings.range.percent.max) {
+                        newWidth = this.settings.range.percent.v;
+                    }
+                }
+
                 let elemSettings = {
                     id: this.id,
-                    field: 'slider',
+                    name: this.settings.name,
                     newValue: parseInt(newWidth, 10),
                     oldValue: this.currentValue || this.settings.defWidth
                 };
 
-                if (this.counter < this.elemLength) {
-                    this.$store.dispatch('editor/replaceElement', elemSettings);
-                }
-
                 this.$store.dispatch('editor/setElemSettings', elemSettings);
-                this.$store.dispatch('editor/isDisabledBtn');
 
-                this.$store.dispatch('editor/setCurrentElemSettings', {
-                    id: this.id, field: 'slider', newValue: parseInt(newWidth, 10)
-                });
-            },
+            }, 100)
         },
         data: () => {
-            return {};
+            return {
+                tile: false,
+                dim: '%'
+            };
         },
     };
 </script>

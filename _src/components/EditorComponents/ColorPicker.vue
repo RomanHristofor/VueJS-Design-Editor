@@ -1,12 +1,11 @@
 <template>
     <div>
         <v-list-tile-action >
-            {{ settings.label }}
+            {{ settings.text }}
         </v-list-tile-action>
         <v-list-tile-content>
-
+            <!--@{{elemColor.newValue}}@-->
             <el-color-picker
-                :show-alpha="settings.opacity"
                 :value="currentValue"
                 @change="setColor($event)"
                 size="mini"
@@ -24,10 +23,14 @@
         props: ['settings', 'id'],
         created() {
             this.$store.dispatch('editor/setCurrentElemSettings', {
-                id: this.id, name: this.settings.name, newValue: this.settings.defColor,
+                id: this.id, field: 'cPicker', newValue: this.settings.defColor,
             });
         },
         computed: {
+            ...mapGetters('editor', {
+                counter   : 'getCounter',
+                elemLength: 'getElemSettingsLength',
+            }),
             currentValue() {
                 return this.$store.getters['editor/getCurrentElemSettings'](this.id).newValue;
             }
@@ -36,12 +39,21 @@
             setColor(newColor) {
                 let elemSettings = {
                     id: this.id,
-                    name: this.settings.name,
+                    field: 'cPicker',
                     newValue: newColor,
                     oldValue: this.currentValue || this.settings.defColor
                 };
 
+                if (this.counter < this.elemLength) {
+                    this.$store.dispatch('editor/replaceElement', elemSettings);
+                }
+
                 this.$store.dispatch('editor/setElemSettings', elemSettings);
+                this.$store.dispatch('editor/isDisabledBtn');
+
+                this.$store.dispatch('editor/setCurrentElemSettings', {
+                    id: this.id, field: 'cPicker', newValue: newColor
+                });
             },
         },
         data: () => {

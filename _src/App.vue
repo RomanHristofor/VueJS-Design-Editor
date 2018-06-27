@@ -11,43 +11,62 @@
         >
             <v-list>
                 <router-link
-                    v-for="(item, index) in links"
+                    v-for="(item, index) in menuList"
                     :key="index"
                     :to="item.url"
+                    @click.native="flag=!flag"
                     active-class="active"
-                    :class="{ 'disabled': pageName === item.path }"
-                    exact
                 >
-                    <!--<transition name="slide" mode="out-in">-->
-                        <v-list-tile>
-                            <v-list-tile-action>
+                    <transition name="slide" mode="out-in">
+                        <v-list-tile
+                            v-if="flag === true"
+                        >
+                            <v-list-tile-action
+                                v-if="item.icon==='bubble_chart'"
+                            >
                                 <v-icon v-html="item.icon"></v-icon>
                             </v-list-tile-action>
 
-                            <v-list-tile-content>
-                                <modal-links>
-                                    <v-list-tile-title slot="textLink">
-                                        {{ item.text }}
-                                    </v-list-tile-title>
-                                </modal-links>
-                                <!--<v-list-tile-title-->
-                                    <!--v-text="item.text"-->
-                                <!--/>-->
+                            <v-list-tile-content
+                                v-if="item.text==='Design Editor'"
+                            >
+                                <v-list-tile-title
+                                    v-text="item.text"
+                                ></v-list-tile-title>
+
                             </v-list-tile-content>
                         </v-list-tile>
-                    <!--</transition>-->
+                    </transition>
+                    <transition name="slide" mode="out-in">
+                        <v-list-tile
+                            v-if="flag !== true"
+                        >
+                            <v-list-tile-action
+                                v-if="item.icon==='home'"
+                            >
+                                <v-icon class="icon-run">directions_run</v-icon>
+                                <!--<v-icon v-html="item.icon"></v-icon>-->
+                            </v-list-tile-action>
+
+                            <v-list-tile-content
+                                v-if="item.text==='General Settings'"
+                            >
+                                <v-list-tile-title
+                                    v-text="item.text"
+                                ></v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                    </transition>
                 </router-link>
 
                 <editor-components
-                    v-if="elem.page === 'site' && pageName === 'site'"
+                    v-if="elem.page === pageName"
                     v-for="(elem, i) in settings"
                     :elements="elem.elements"
                 />
 
                 <general-components
-                    v-if="elem.page === 'home' && pageName === 'home'"
-                    v-for="(elem, i) in settings"
-                    :elements="elem.elements"
+                    v-if="pageName==='home'"
                 />
 
             </v-list>
@@ -62,60 +81,53 @@
         </v-toolbar>
 
         <v-content>
-            <transition name="slide" mode="out-in">
-                <keep-alive>
-                    <router-view></router-view>
-                </keep-alive>
-            </transition>
+            <router-view/>
         </v-content>
 
+        <!--<v-footer :fixed="fixed" app>-->
+        <!--<span>&copy; 2017</span>-->
+        <!--</v-footer>-->
     </v-app>
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
+    import {mapGetters} from 'vuex';
 
     import EditorComponents from './components/EditorComponents';
     import GeneralComponents from './components/GeneralComponents';
-    import ModalLinks from './components/modals/ModalGoTo';
 
     export default {
         name: 'App',
         components: {
             EditorComponents,
             GeneralComponents,
-            ModalLinks
         },
         computed: {
             ...mapGetters('editor', {
                 settings: 'settings',
-                elemLength: 'getElemSettingsLength',
+            }),
+            ...mapGetters('menu', {
+                menuList: 'items'
             }),
             pageName() {
                 return this.$route.name;
             },
         },
-        methods: {
-
-        },
+        methods: {},
         data() {
             return {
                 flag: false,
                 title: 'Site',
-                links: [
-                    {
-                        url: '/',
-                        path: 'home',
-                        icon: 'home',
-                        text: 'General Settings'
-                    },
-                    {
-                        url: '/site',
-                        path: 'site',
-                        icon: 'bubble_chart',
-                        text: 'Design Editor',
-                    },
-                ],
+                // items: [
+                //     {
+                //         icon: 'home',
+                //         text: 'General Settings',
+                //     },
+                //     {
+                //         icon: 'bubble_chart',
+                //         text: 'Design Editor',
+                //     },
+                // ],
                 clipped: false,
                 drawer: true,
                 fixed: false,
@@ -126,17 +138,7 @@
         },
     };
 </script>
-
 <style>
-    .list__tile > div {
-        width: 100%;
-    }
-
-    .application.theme--light a.disabled {
-        color: #444;
-        cursor: no-drop;
-    }
-
     .icon-run {
         transform: scale(-1, 1);
     }
