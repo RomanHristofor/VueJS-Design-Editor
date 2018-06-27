@@ -7,3 +7,13 @@ node_js:
 branches:
   only:
     - master
+
+after_success:
+  - cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
+deploy:
+  provider: heroku
+  app: design-editor-app
+  api_key:
+    secure: "4c4f669f-a210-4338-b17a-f7a121ddf6a2"
