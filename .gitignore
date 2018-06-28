@@ -3,4 +3,4 @@ node_modules
 .DS_Store
 docs/_book
 /test/unit/coverage/
-package-lock.json
+/dist

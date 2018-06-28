@@ -219,7 +219,7 @@
         data() {
             return {
                 iframe: {
-                    src: 'http://vigbocms.loc' //this.$route.query.src
+                    src: ''//this.$route.query.src
                 },
                 bodyWidth: 0,
                 fontFamily: '',
