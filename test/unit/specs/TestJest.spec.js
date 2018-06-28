@@ -15,20 +15,20 @@ describe('Test', () => {
   })
 
   it('отрисовывает ошибку, когда имя пользователя меньше 7 символов', () => {
-    const wrapper = factory({ username: '' })
-
-    expect(wrapper.find('.error').exists()).toBeTruthy()
-  })
-
-  it('отрисовывает ошибку, когда имя пользователя состоит только из пробелов', () => {
-    const wrapper = factory({ username: ' '.repeat(7) })
-
-    expect(wrapper.find('.error').exists()).toBeTruthy()
-  })
-
-  it('не отрисовывает ошибку, когда имя пользователя равно 7 символам или более', () => {
     const wrapper = factory({ username: 'Александр' })
 
-    expect(wrapper.find('.error').exists()).toBeFalsy()
+    expect(wrapper.find('.error').exists()).toBeTruthy()
   })
+
+  // it('отрисовывает ошибку, когда имя пользователя состоит только из пробелов', () => {
+  //   const wrapper = factory({ username: ' '.repeat(7) })
+
+  //   expect(wrapper.find('.error').exists()).toBeTruthy()
+  // })
+
+  // it('не отрисовывает ошибку, когда имя пользователя равно 7 символам или более', () => {
+  //   const wrapper = factory({ username: 'Александр' })
+
+  //   expect(wrapper.find('.error').exists()).toBeFalsy()
+  // })
 })

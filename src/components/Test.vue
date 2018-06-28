@@ -20,7 +20,7 @@ export default {
   data () {
     return {
       message: 'Добро пожаловать в книгу рецептов Vue.js',
-      username: 'Александр'
+      username: ''
     }
   },
 
