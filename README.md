@@ -17,3 +17,16 @@ git clone https://github.com/RomanHristofor/design_editor.git
 3. $ npm install
 
 4. $ npm run dev
+
+
+# Factory line manager
+[![Travis][build-badge]][build]
+[![Coveralls][coveralls-badge]][coveralls]
+
+Awesome factory line manager!
+
+[build-badge]: https://img.shields.io/travis/RomanHristofor/design_editor/master.png?style=flat-square
+[build]: https://travis-ci.org/RomanHristofor/design_editor
+
+[coveralls-badge]: https://img.shields.io/coveralls/RomanHristofor/design_editor/master.png?style=flat-square
+[coveralls]: https://coveralls.io/github/RomanHristofor/design_editor
