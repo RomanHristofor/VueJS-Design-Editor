@@ -7,6 +7,7 @@ import { router } from './router';
 import {
     Vuetify,
     VApp,
+    VAvatar,
     VNavigationDrawer,
     VFooter,
     VList,
@@ -28,6 +29,8 @@ import {
     VSelect,
     VCheckbox,
     VSwitch,
+    VRadioGroup,
+    VChip,
     VProgressCircular,
     VProgressLinear,
     VAlert,
@@ -47,6 +50,7 @@ import VueResource from 'vue-resource';
 Vue.use(Vuetify, {
     components: {
         VApp,
+        VAvatar,
         VNavigationDrawer,
         VFooter,
         VList,
@@ -68,6 +72,8 @@ Vue.use(Vuetify, {
         VSelect,
         VCheckbox,
         VSwitch,
+        VRadioGroup,
+        VChip,
         VProgressCircular,
         VProgressLinear,
         VAlert,

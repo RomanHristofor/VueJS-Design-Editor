@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="list__tile">
         <v-list-tile-action >
             {{ settings.label }}
         </v-list-tile-action>
-        <v-list-tile-content>
+        <v-list-tile-content class="list__tile__content-small">
 
             <el-color-picker
                 :show-alpha="settings.opacity"
@@ -24,7 +24,8 @@
         props: ['settings', 'id'],
         created() {
             this.$store.dispatch('editor/setCurrentElemSettings', {
-                id: this.id, name: this.settings.name, newValue: this.settings.defColor,
+                id: this.id, name: this.settings.name, newValue: this.settings.defValue,
+                selector: this.settings.selector, css: this.settings.css,
             });
         },
         computed: {
@@ -38,7 +39,9 @@
                     id: this.id,
                     name: this.settings.name,
                     newValue: newColor,
-                    oldValue: this.currentValue || this.settings.defColor
+                    oldValue: this.currentValue || this.settings.defValue,
+                    selector: this.settings.selector,
+                    css: this.settings.css,
                 };
 
                 this.$store.dispatch('editor/setElemSettings', elemSettings);

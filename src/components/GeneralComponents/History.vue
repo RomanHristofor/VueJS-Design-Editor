@@ -1,12 +1,25 @@
 <template>
     <div>
         <v-flex xs4>
+            <v-btn color="success"
+                   @click="saveChanges()"
+                   :disabled="isDisabledClear"
+            >
+                Save
+            </v-btn>
             <v-btn color="warning"
-                   @click="clearChanges('clear')"
+                   @click="clearChanges({history:'clear'})"
                    :disabled="isDisabledClear"
             >
                 Clear
             </v-btn>
+
+            <!--<v-btn color="error"
+                   @click=""
+                   :disabled=""
+            >
+                Reset //после нажатия на кнопку Save
+            </v-btn> -->
 
             <v-btn flat icon
                    color="blue lighten-2"
@@ -29,7 +42,8 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex';
+    import {mapGetters, mapActions} from 'vuex';
+    import {saveSettings} from '../../Actions/loads';
 
     export default {
         name: 'History',
@@ -37,6 +51,7 @@
             ...mapGetters('editor', {
                 isDisabledBtn: 'getIsDisabledBtn',
                 isDisabledClear: 'getIsDisabledClear',
+                data: 'getData',
             }),
         },
         methods: {
@@ -53,8 +68,34 @@
                 this.$store.dispatch('editor/isDisabledBtn');
             },
             ...mapActions('editor', {
-                clearChanges: 'isDisabledBtn',
-            })
+                clearChanges: 'clearChangesElemSettings',
+                // saveChanges: 'pushCurrentElemSettings',
+            }),
+            saveChanges() {
+                // saveSettings(this.$http, this.$alert);
+                this.$http({
+                    method: 'post',
+                    url: 'api/editor',
+                    data: {
+                        setting: JSON.stringify(this.data),
+                    },
+                })
+                    .then(({data}) => {
+                            if (data.errors === false && data.data) {
+
+                            } else {
+                                this.$alert.danger({
+                                    message: data.errors,
+                                });
+                            }
+                        },
+                        (reason) => {
+                            this.$alert.danger({
+                                message: reason,
+                            });
+                        },
+                    );
+            },
         },
         data() {
             return {};

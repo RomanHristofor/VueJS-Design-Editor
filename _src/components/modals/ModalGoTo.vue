@@ -1,6 +1,6 @@
 <template>
     <v-layout row justify-center
-              lazy-validation
+              ref="form" lazy-validation
               :open="eventOpenDialog ? isOpen() : ''"
     >
         <div
@@ -21,9 +21,8 @@
                     <v-spacer></v-spacer>
                     <v-btn color="green darken-1"
                            flat="flat"
-                           :disabled="elemLength === 0"
-                           @click="saveChanges">Да
-                    </v-btn>
+                           :disabled="isClear"
+                           @click="saveChanges">Да</v-btn>
                     <v-btn color="green darken-1" flat="flat" @click="resetChanges">Нет</v-btn>
                 </v-card-actions>
             </v-card>
@@ -38,9 +37,9 @@
         name: 'ModalGoTo',
         computed: {
             ...mapGetters('editor', {
+                data: 'getElemSettings',
                 elemLength: 'getElemSettingsLength',
                 isOpenSearch: 'getOpenSearchStatus',
-                data: 'getData',
             }),
         },
         props: {
@@ -53,37 +52,41 @@
         },
         methods: {
             isOpen() {
-                if (this.elemLength > 0) {
+                if ( this.elemLength > 0 ) {
                     this.dialog = true;
                 }
             },
             saveChanges() {
-                this.$http
-                    .post('api/editor', {
-                        data: this.data,
-                        type: 'dispatcher',
-                    })
-                    .then(({data}) => {
-                            if (data.errors === false && data.data) {
-                                // call method editor/clear changes
-                            } else {
+                debugger
+                if (this.$refs.form.validate()) {
+                    this.$http
+                        .post('/design_editor', {
+                            data: this.data,
+                            type: 'dispatcher',
+                        })
+                        .then( ({ data }) => {
+                                if (data.errors === false) {
+                                    this.clear();
+                                } else {
+                                    this.$alert.danger({
+                                        message: data.errors,
+                                    });
+
+                                }
+                            },
+                            (reason) => {
                                 this.$alert.danger({
-                                    message: data.errors,
+                                    message: reason,
                                 });
-                            }
-                        },
-                        (reason) => {
-                            this.$alert.danger({
-                                message: reason,
-                            });
-                        },
-                    );
+                            },
+                        );
+                }
             },
             resetChanges() {
                 this.$store.dispatch('editor/clearChangesElemSettings', {modal: 'clear'});
                 this.dialog = false;
 
-                if (this.link.path === 'search') {
+                if ( this.link.path === 'search' ) {
                     this.$store.dispatch('editor/setOpenCloseSearch');
                     window.frames.vigbo.postMessage(this.isOpenSearch, '*');
                 }
@@ -93,6 +96,7 @@
         data() {
             return {
                 dialog: false,
+                isClear: true,
             };
         },
     };

@@ -1,5 +1,6 @@
 <template>
-    <div class="wrapper-select">
+    <div class="list__tile">
+        <div>
 
         <v-layout row wrap>
             <v-flex xs12 >
@@ -25,37 +26,29 @@
             </v-flex>
         </v-layout>
 
-        <!--<fonts-select
-            :settings="settings"
-            :array="settings.options"
-            :id="id"
-        />-->
-
         <v-list-tile
             v-for="(item, i) in components"
         >
             <color-picker
-                v-if="item.show || (item.colorPicker && (isPickerShow && !item.show))"
+                v-if="item.show || (item.type === 'colorPicker' && (isPickerShow && !item.show))"
                 :settings="item"
                 :id="item.id"
             />
 
             <slider
-                v-if="item.slider && isSliderShow"
+                v-if="item.type ==='slider' && isSliderShow"
                 :settings="item"
                 :id="item.id"
             />
         </v-list-tile>
-
+        </div>
     </div>
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
 
-    import ColorPicker from '../EditorComponents/ColorPicker';
-    import Slider from '../EditorComponents/Slider';
-    // import FontsSelect from '../GeneralSettings/FontsSelect';
+    import ColorPicker from './ColorPicker';
+    import Slider from './Slider';
 
     export default {
         name: "SelectComposite",
@@ -76,11 +69,11 @@
         components: {
             ColorPicker,
             Slider,
-            // FontsSelect,
         },
         created() {
             this.$store.dispatch('editor/setCurrentElemSettings', {
-                id: this.id, name: this.settings.name, newValue: this.settings.value
+                id: this.id, name: this.settings.name, newValue: this.settings.defValue,
+                selector: this.settings.selector, css: this.settings.css,
             });
         },
         computed: {
@@ -91,26 +84,18 @@
         watch: {
             result (newV, oldV) {
                 if (oldV !== newV) {
-                    this.showComponents({
-                        name: newV
-                    });
+                    this.showComponents(_.find(this.settings.options, obj => {
+                        if (obj.name === newV) return obj;
+                    }));
                 }
             }
         },
         methods: {
             showComponents(e) {
-                if (e.name === 'подчеркивание' || e.name === 'зачеркивание') {
-                    this.isSliderShow = true;
-                    this.isPickerShow = false;
-                }
-                if (e.name === 'маркер') {
-                    this.isPickerShow = true;
-                    this.isSliderShow = true;
-                }
-                if (e.name === 'выделение цветом') {
-                    this.isPickerShow = false;
-                    this.isSliderShow = false;
-                }
+                if (e.picker) this.isPickerShow = e.picker;
+                if (e.slider) this.isSliderShow = e.slider;
+                if (!e.picker) this.isPickerShow = e.picker;
+                if (!e.slider) this.isSliderShow = e.slider;
             },
             changeOptions(e) {
                 if (e) {
@@ -120,7 +105,9 @@
                         id: this.id,
                         name: this.settings.name,
                         newValue: e.name,
-                        oldValue: this.currentValue
+                        oldValue: this.currentValue,
+                        selector: this.settings.selector,
+                        css: this.settings.css,
                     };
 
                     this.$store.dispatch('editor/setElemSettings', elemSettings);
@@ -138,11 +125,5 @@
 </script>
 
 <style scoped>
-
-    /*.input-group.input-group--solo {*/
-        /*width: 250px;*/
-        /*margin-bottom: 50px !important;*/
-    /*}*/
-
 
 </style>

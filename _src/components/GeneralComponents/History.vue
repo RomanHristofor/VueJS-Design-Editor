@@ -2,8 +2,8 @@
     <div>
         <v-flex xs4>
             <v-btn color="warning"
-                @click="clearChanges('clear')"
-                :disabled="isDisabledClear"
+                   @click="clearChanges({history:'clear'})"
+                   :disabled="isDisabledClear"
             >
                 Clear
             </v-btn>
@@ -24,42 +24,15 @@
                 <v-icon>thumb_down</v-icon>
             </v-btn>
             <v-subheader></v-subheader>
-
-            <v-subheader></v-subheader>
         </v-flex>
-
-        <v-list-tile
-            v-for="(item, i) in elements"
-        >
-            <slider
-                v-if="item.slider"
-                :settings="item"
-                :id="item.id"
-            />
-
-            <color-picker
-                v-if="item.cPicker"
-                :settings="item"
-                :id="item.id"
-            />
-
-        </v-list-tile>
     </div>
 </template>
 
 <script>
     import { mapGetters, mapActions } from 'vuex';
 
-    import Slider from './EditorComponents/Slider';
-    import ColorPicker from './EditorComponents/ColorPicker';
-
     export default {
-        name: 'EditorComponents',
-        props: ['elements'], // TODO typing fix
-        components: {
-            Slider,
-            ColorPicker,
-        },
+        name: 'History',
         computed: {
             ...mapGetters('editor', {
                 isDisabledBtn: 'getIsDisabledBtn',
@@ -80,19 +53,15 @@
                 this.$store.dispatch('editor/isDisabledBtn');
             },
             ...mapActions('editor', {
-                clearChanges: 'isDisabledBtn',
+                clearChanges: 'clearChangesElemSettings',
             })
         },
         data() {
             return {};
         },
-    };
+    }
 </script>
 
-<style >
-
-    .list__tile {
-        margin-bottom: 50px;
-    }
+<style scoped>
 
 </style>

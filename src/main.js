@@ -2,6 +2,12 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import App from './App';
+import VueAlert from '@vuejs-pt/vue-alert';
+Vue.use(VueAlert);
+
+// import { cloneDeep } from 'lodash';
+// Vue.use(cloneDeep);
+
 import { store } from './store';
 import { router } from './router';
 import {

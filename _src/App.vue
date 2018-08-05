@@ -10,66 +10,83 @@
             app
         >
             <v-list>
-                <router-link
-                    v-for="(item, index) in menuList"
-                    :key="index"
-                    :to="item.url"
-                    @click.native="flag=!flag"
-                    active-class="active"
-                >
-                    <transition name="slide" mode="out-in">
-                        <v-list-tile
-                            v-if="flag === true"
-                        >
-                            <v-list-tile-action
-                                v-if="item.icon==='bubble_chart'"
-                            >
-                                <v-icon v-html="item.icon"></v-icon>
-                            </v-list-tile-action>
+                <navigation
+                    :menu="links"
+                />
 
-                            <v-list-tile-content
-                                v-if="item.text==='Design Editor'"
-                            >
-                                <v-list-tile-title
-                                    v-text="item.text"
-                                ></v-list-tile-title>
-
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </transition>
-                    <transition name="slide" mode="out-in">
-                        <v-list-tile
-                            v-if="flag !== true"
-                        >
-                            <v-list-tile-action
-                                v-if="item.icon==='home'"
-                            >
-                                <v-icon class="icon-run">directions_run</v-icon>
-                                <!--<v-icon v-html="item.icon"></v-icon>-->
-                            </v-list-tile-action>
-
-                            <v-list-tile-content
-                                v-if="item.text==='General Settings'"
-                            >
-                                <v-list-tile-title
-                                    v-text="item.text"
-                                ></v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </transition>
-                </router-link>
-
-                <editor-components
-                    v-if="elem.page === pageName"
+                <page-components
+                    v-if="elem.page === 'menu' && pageName === 'menu'"
                     v-for="(elem, i) in settings"
                     :elements="elem.elements"
                 />
 
-                <general-components
-                    v-if="pageName==='home'"
+                <page-components
+                    v-if="elem.page === 'general' && pageName === 'general'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
                 />
 
+                <page-components
+                    v-if="elem.page === 'search' && pageName === 'search'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'blog_categories' && pageName === 'categories'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'blog_page' && pageName === 'page'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'blog_post' && pageName === 'post'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'blog_slider' && pageName === 'slider'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'shop_categories' && pageName === 'shop-categories'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'shop_catalog' && pageName === 'shop-catalog'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'shop_product' && pageName === 'shop-product'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'shop_order' && pageName === 'shop-order'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+
+                <page-components
+                    v-if="elem.page === 'shop_pre_order' && pageName === 'shop-pre-order'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
             </v-list>
+
         </v-navigation-drawer>
         <v-toolbar
             app
@@ -81,33 +98,61 @@
         </v-toolbar>
 
         <v-content>
-            <router-view/>
+            <transition name="slide" mode="out-in">
+                <keep-alive>
+                    <router-view></router-view>
+                </keep-alive>
+            </transition>
         </v-content>
 
-        <!--<v-footer :fixed="fixed" app>-->
-        <!--<span>&copy; 2017</span>-->
-        <!--</v-footer>-->
     </v-app>
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
+    import { mapGetters } from 'vuex';
 
-    import EditorComponents from './components/EditorComponents';
-    import GeneralComponents from './components/GeneralComponents';
+    import Navigation from './components/GeneralComponents/Navigation';
+    import PageComponents from './components/Page';
+
+    // import MenuComponents from './components/MenuPage/MenuComponents';
+    // import GeneralComponents from './components/GeneralPage/GeneralComponents';
+    // import SearchComponents from './components/SearchPage/SearchComponents';
+    // import BlogCategories from './components/BlogPage/Categories';
+    // import BlogPage from './components/BlogPage/Page';
+    // import BlogPost from './components/BlogPage/Post';
+    // import BlogSlider from './components/BlogPage/BlogSlider';
+    // import ShopCategories from './components/ShopPage/ShopCategories';
+    // import ShopCatalog from './components/ShopPage/ShopCatalog';
+    // import ShopProduct from './components/ShopPage/ShopProduct';
+    // import ShopOrder from './components/ShopPage/ShopOrder';
+    // import ShopPreOrder from './components/ShopPage/ShopPreOrder';
 
     export default {
         name: 'App',
         components: {
-            EditorComponents,
-            GeneralComponents,
+            Navigation,
+            PageComponents,
+            // MenuComponents,
+            // GeneralComponents,
+            // SearchComponents,
+            // BlogCategories,
+            // BlogPage,
+            // BlogPost,
+            // BlogSlider,
+            // ShopCategories,
+            // ShopCatalog,
+            // ShopProduct,
+            // ShopOrder,
+            // ShopPreOrder,
         },
         computed: {
             ...mapGetters('editor', {
                 settings: 'settings',
+                elemLength: 'getElemSettingsLength',
+                // isOpenSearch: 'getOpenSearchStatus',
             }),
             ...mapGetters('menu', {
-                menuList: 'items'
+                links: 'links'
             }),
             pageName() {
                 return this.$route.name;
@@ -116,18 +161,6 @@
         methods: {},
         data() {
             return {
-                flag: false,
-                title: 'Site',
-                // items: [
-                //     {
-                //         icon: 'home',
-                //         text: 'General Settings',
-                //     },
-                //     {
-                //         icon: 'bubble_chart',
-                //         text: 'Design Editor',
-                //     },
-                // ],
                 clipped: false,
                 drawer: true,
                 fixed: false,
@@ -138,26 +171,63 @@
         },
     };
 </script>
+
 <style>
+    .list__tile > div {
+        width: 100%;
+    }
+
+    .list__tile {
+        margin-bottom: 10px !important;
+        min-height: 40px;
+        height: auto !important;
+    }
+
+    .input-group {
+        padding-top: 28px;
+    }
+
+    .theme--light .list .list__tile--link:hover{
+        background: none;
+    }
+
+    .input-group.input-group--slider {
+        padding-left: 16px;
+    }
+
+    .list__tile > .list__tile__content-small{
+        width: auto;
+        overflow: visible;
+    }
+
+    .application.theme--light a.disabled {
+        color: #444;
+        cursor: no-drop;
+    }
+
     .icon-run {
         transform: scale(-1, 1);
     }
 
-    .slide-enter {}
+    .slide-enter {
+    }
 
     .slide-enter-active {
         animation: slideIn 0.5s;
     }
 
-    .slide-enter-to {}
+    .slide-enter-to {
+    }
 
-    .slide-leave {}
+    .slide-leave {
+    }
 
     .slide-leave-active {
         animation: slideOut 0.5s;
     }
 
-    .slide-leave-to {}
+    .slide-leave-to {
+    }
 
     @keyframes slideIn {
         from {
