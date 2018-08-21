@@ -14,6 +14,7 @@
             <v-list>
                 <navigation
                     :menu="links"
+                    :subMenu="subLinks"
                 />
 
                 <page-components
@@ -77,13 +78,23 @@
                 />
 
                 <page-components
-                    v-if="elem.page === 'shop_order' && pageName === 'shop-order'"
+                    v-if="elem.page === 'shop_order_page' && pageName === 'shop-order-page'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+                <page-components
+                    v-if="elem.page === 'shop_order_form' && pageName === 'shop-order-form'"
                     v-for="(elem, i) in settings"
                     :elements="elem.elements"
                 />
 
                 <page-components
-                    v-if="elem.page === 'shop_pre_order' && pageName === 'shop-pre-order'"
+                    v-if="elem.page === 'shop_pre_order_page' && pageName === 'shop-pre-order-page'"
+                    v-for="(elem, i) in settings"
+                    :elements="elem.elements"
+                />
+                <page-components
+                    v-if="elem.page === 'shop_pre_order_form' && pageName === 'shop-pre-order-form'"
                     v-for="(elem, i) in settings"
                     :elements="elem.elements"
                 />
@@ -129,7 +140,8 @@
                 // isOpenSearch: 'getOpenSearchStatus',
             }),
             ...mapGetters('menu', {
-                links: 'links'
+                links: 'links',
+                subLinks: 'subLinks',
             }),
             pageName() {
                 return this.$route.name;

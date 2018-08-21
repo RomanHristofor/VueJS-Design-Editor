@@ -1489,8 +1489,8 @@ function loadSettings() {
         },
         {
             id: 110,
-            page: 'shop_order',
-            url: '/order',
+            page: 'shop_order_page',
+            // url: '/order/page',
             elements: [
                 {
                     id: 0, name: "font-page-shop_order", type: "fontSelect",
@@ -1588,6 +1588,12 @@ function loadSettings() {
                     label: "Цвет разделительных полос", defValue: "rgba(211,123,123,1)", opacity: true,
                     selector: [], css: []
                 },
+            ],
+        },
+        {
+            id: 111,
+            page: 'shop_order_form',
+            elements: [
                 //Вид полей
                 {
                     id: 19, name: "type-fields-shop_order", type: "radio", sample: true,
@@ -1807,8 +1813,8 @@ function loadSettings() {
         },
         {
             id: 120,
-            page: 'shop_pre_order',
-            url: '/pre-order',
+            page: 'shop_pre_order_page',
+            // url: '/pre-order',
             elements: [
                 {
                     id: 0, name: "size-heading-ordering-shop_pre_order", type: "slider",
@@ -1830,6 +1836,12 @@ function loadSettings() {
                     label: "Цвет текста над формой", defValue: "rgba(86, 73, 73, 1)", opacity: true,
                     selector: [], css: []
                 },
+            ],
+        },
+        {
+            id: 121,
+            page: 'shop_pre_order_form',
+            elements: [
                 //Вид полей
                 {
                     id: 19, name: "type-fields-shop_pre_order", type: "radio", sample: true,
@@ -2043,6 +2055,6 @@ function loadSettings() {
                     selector: [], css: []
                 },
             ],
-        },
+        }
     ];
 }

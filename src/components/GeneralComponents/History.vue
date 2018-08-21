@@ -43,7 +43,6 @@
 
 <script>
     import {mapGetters, mapActions} from 'vuex';
-    import {saveSettings} from '../../Actions/loads';
 
     export default {
         name: 'History',
@@ -69,33 +68,8 @@
             },
             ...mapActions('editor', {
                 clearChanges: 'clearChangesElemSettings',
-                // saveChanges: 'pushCurrentElemSettings',
+                saveChanges: 'pushCurrentElemSettings',
             }),
-            saveChanges() {
-                // saveSettings(this.$http, this.$alert);
-                this.$http({
-                    method: 'post',
-                    url: 'api/editor',
-                    data: {
-                        setting: JSON.stringify(this.data),
-                    },
-                })
-                    .then(({data}) => {
-                            if (data.errors === false && data.data) {
-
-                            } else {
-                                this.$alert.danger({
-                                    message: data.errors,
-                                });
-                            }
-                        },
-                        (reason) => {
-                            this.$alert.danger({
-                                message: reason,
-                            });
-                        },
-                    );
-            },
         },
         data() {
             return {};

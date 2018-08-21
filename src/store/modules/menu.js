@@ -23,31 +23,26 @@ export default {
                 links: [
                     {
                         path: 'shop-categories',
-                        url: '/shop/categories',
                         icon: 'account_circle',
                         text: 'Categories'
                     },
                     {
                         path: 'shop-catalog',
-                        url: '/shop/catalog',
                         icon: 'account_circle',
                         text: 'Catalog'
                     },
                     {
                         path: 'shop-product',
-                        url: '/shop/product',
                         icon: 'account_circle',
                         text: 'Product'
                     },
                     {
                         path: 'shop-order',
-                        url: '/shop/order',
                         icon: 'account_circle',
                         text: 'Order'
                     },
                     {
                         path: 'shop-pre-order',
-                        url: '/shop/pre-order',
                         icon: 'account_circle',
                         text: 'Pre-Order'
                     },
@@ -62,25 +57,21 @@ export default {
                 links: [
                     {
                         path: 'categories',
-                        url: '/blog/categories',
                         icon: 'account_circle',
                         text: 'Categories'
                     },
                     {
                         path: 'page',
-                        url: '/blog/page',
                         icon: 'account_circle',
                         text: 'Blog Page'
                     },
                     {
                         path: 'post',
-                        url: '/blog/post',
                         icon: 'account_circle',
                         text: 'Blog Post'
                     },
                     {
                         path: 'slider',
-                        url: '/blog/slider',
                         icon: 'account_circle',
                         text: 'Slider'
                     },
@@ -93,10 +84,43 @@ export default {
                 text: 'Search',
             },
         ],
+        subMenu: {
+            'shop-order': [
+                {
+                    label: 'Order',
+                    icon: 'arrow_back',
+                },
+                {
+                    path: 'shop-order-page',
+                    text: 'Page Settings',
+                },
+                {
+                    path: 'shop-order-form',
+                    text: 'Form Settings',
+                },
+            ],
+            'shop-pre-order': [
+                {
+                    label: 'Pre-order',
+                    icon: 'arrow_back',
+                },
+                {
+                    path: 'shop-pre-order-page',
+                    text: 'Page Settings',
+                },
+                {
+                    path: 'shop-pre-order-form',
+                    text: 'Form Settings',
+                },
+            ],
+        }
     },
     getters: {
         links(state) {
             return state.menu;
+        },
+        subLinks(state) {
+            return state.subMenu;
         },
     },
 };

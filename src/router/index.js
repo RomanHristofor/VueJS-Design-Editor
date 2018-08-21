@@ -95,6 +95,20 @@ export const router = new Router({
             name: 'shop-order',
             meta: 'Order',
             component: Site,
+            children: [
+                {
+                    path: '/shop/order/page',
+                    name: 'shop-order-page',
+                    meta: 'Page Settings',
+                    component: Site,
+                },
+                {
+                    path: '/shop/order/form',
+                    name: 'shop-order-form',
+                    meta: 'Form Settings',
+                    component: Site,
+                }
+            ],
             beforeEnter(from, to, next) {
                 store.dispatch('editor/clearCurrentElemSettings');
                 store.dispatch('editor/loadSettings');
@@ -106,6 +120,20 @@ export const router = new Router({
             name: 'shop-pre-order',
             meta: 'Pre-order',
             component: Site,
+            children: [
+                {
+                    path: '/shop/pre-order/page',
+                    name: 'shop-pre-order-page',
+                    meta: 'Page Settings',
+                    component: Site,
+                },
+                {
+                    path: '/shop/pre-order/form',
+                    name: 'shop-pre-order-form',
+                    meta: 'Form Settings',
+                    component: Site,
+                }
+            ],
             beforeEnter(from, to, next) {
                 store.dispatch('editor/clearCurrentElemSettings');
                 store.dispatch('editor/loadSettings');

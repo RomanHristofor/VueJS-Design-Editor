@@ -60,14 +60,14 @@
         <div
             v-if="pageName !== 'empty'"
         >
-            <v-list-tile
+            <v-list-tile v-if="!subMenu[pageName]"
                 @click="onClickLink(routeLink || {path: pageName})"
             >
                 <v-list-tile-action>
                     <v-icon v-html="'sort'"></v-icon>
                 </v-list-tile-action>
-                <v-list-tile-content>
 
+                <v-list-tile-content>
                     <modal-links
                         :link="routeLink || {path: pageName}"
                         :eventOpenDialog="eventName"
@@ -87,7 +87,37 @@
 
                         </v-list-tile-title>
                     </modal-links>
+                </v-list-tile-content>
+            </v-list-tile>
 
+            <v-list-tile v-else
+                v-for="(item, i) in subMenu[pageName]"
+                @click="onClickLink(item)"
+            >
+                <v-list-tile-action>
+                    <v-icon
+                        class="customize-icons"
+                        v-text="item.icon"
+                        @click="$router.go(-1)"
+                    ></v-icon>
+                    {{ item.label }}
+                </v-list-tile-action>
+
+                <v-list-tile-content>
+                    <modal-links
+                         :link="item"
+                         :eventOpenDialog="eventName"
+                    >
+                        <v-list-tile-title
+                            slot="textLink"
+                        >
+                            <router-link
+                                :to="{name: item.path}"
+                            >
+                                {{ item.text }}
+                            </router-link>
+                        </v-list-tile-title>
+                    </modal-links>
                 </v-list-tile-content>
             </v-list-tile>
         </div>
@@ -106,6 +136,10 @@
         props: {
             menu: {
                 type: Array,
+                required: true
+            },
+            subMenu: {
+                type: Object,
                 required: true
             },
         },
@@ -161,6 +195,15 @@
             onClickLink(item) {
                 this.routeLink = item;
 
+                if ((item.path === 'shop-order-page' || item.path === 'shop-order-form')
+                    && this.$route.name === 'empty') {
+                    this.$router.push({path: '/shop/order'});
+                }
+                if ((item.path === 'shop-pre-order-page' || item.path === 'shop-pre-order-form')
+                    && this.$route.name === 'empty') {
+                    this.$router.push({path: '/shop/pre-order'});
+                }
+
                 if (item.path === 'search' && this.$route.name === 'empty') {
                     this.eventName = '';
                     this.$store.dispatch('editor/setOpenCloseSearch');
@@ -194,6 +237,12 @@
     .list__group:not(.not__icon) .list__tile .layout > div:first-child,
     .list__group--active:not(.not__icon) .list__tile .layout > div:first-child {
         padding-left: 40px;
+    }
+
+    .customize-icons {
+        left: 30px;
+        top: 7px;
+        position: absolute;
     }
 
     /*.slide-fade-enter-active {*/

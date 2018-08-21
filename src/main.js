@@ -98,6 +98,17 @@ Vue.use(Vuetify, {
         warning: '#FFC107',
     },
 });
+
+import 'font-awesome/css/font-awesome.min.css';
+Vue.use(Vuetify, {
+    iconfont: 'fa4',
+    icons: {
+        'cancel': 'fas fa-ban',
+        'menu': 'fas fa-ellipsis-v',
+        'arrow_back': 'fas fa-long-arrow-alt-left',
+    }
+});
+
 locale.use(lang);
 Vue.use(ColorPicker);
 Vue.use(VueResource);
