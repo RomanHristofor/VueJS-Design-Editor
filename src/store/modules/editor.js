@@ -166,15 +166,25 @@ export default {
             store.commit('clearCurrentElemSettings');
         },
         loadSettings(store) {
-            // Vue.http.get('editor/settings.php')
-            // 		  .then(response => response.json())
-            // 		  .then(data => {
-            // 		  	 store.commit('loadSettings', data);
-            // 		  });
             store.commit('loadSettings', loadSettings());
         },
         setOpenCloseSearch(store) {
             store.commit('setOpenCloseSearch');
+        },
+        pushCurrentElemSettings(store) {
+            Vue.http.post('api/editor', {
+                data: store.getters.getData,
+                type: 'dispatcher',
+            })
+                .then(({data}) => {
+                        if (data.errors === false && data.data) {
+                            // call method editor/clear changes
+                        }
+                    },
+                    (reason) => {
+                        console.log('error', reason);
+                    },
+                );
         },
     },
 };
