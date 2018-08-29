@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!--:class="{ 'disabled': pageName === item.path }"-->
         <router-link
             v-for="(item, index) in menu"
             :key="index"
@@ -163,12 +162,10 @@
         },
         methods: {
             get(e) {
-                console.log('pathname ', e.data);
                 let iFrameElem = document.getElementById('vigbo-cms');
 
                 if (e.data.elem === 'close_search') {
                     this.eventName = e.data.elem;
-                    // this.$store.dispatch('editor/clearChangesElemSettings', {history: 'clear'});
 
                     if (this.elemLength === 0) {
                         this.$store.dispatch('editor/setOpenCloseSearch');
@@ -176,11 +173,10 @@
                         this.$router.push({path: '/'});
                     }
                 }
-                if (e.data.elem === 'shop_product') { // route for SHOP/products
+                if (e.data.elem === 'shop_product') {
                     this.$router.push({ path: '/shop/product' });
                     this.isShop = true;
                 }
-                // if (e.data.elem === 'blog_post') { // TODO add route for BLOG/post
 
                 if (this.$route.path.indexOf('blog') !== -1 &&
                     typeof e.data === 'string' && e.data !== '/blog') {

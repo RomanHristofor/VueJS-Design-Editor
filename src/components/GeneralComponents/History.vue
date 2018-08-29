@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-flex xs4>
+        <v-flex>
             <v-btn color="success"
                    @click="saveChanges()"
                    :disabled="isDisabledClear"
@@ -14,28 +14,18 @@
                 Clear
             </v-btn>
 
-            <!--<v-btn color="error"
-                   @click=""
-                   :disabled=""
-            >
-                Reset //после нажатия на кнопку Save
-            </v-btn> -->
+            <v-icon class="customize-icons next"
+                    @click="next"
+                    :disabled="isDisabledBtn.next"
+                    v-text="'fa-arrow-right'"
+            ></v-icon>
 
-            <v-btn flat icon
-                   color="blue lighten-2"
-                   @click="next"
-                   :disabled="isDisabledBtn.next"
-            >
-                <v-icon>thumb_up</v-icon>
-            </v-btn>
+            <v-icon class="customize-icons"
+                    @click="back"
+                    :disabled="isDisabledBtn.back"
+                    v-text="'fa-arrow-left'"
+            ></v-icon>
 
-            <v-btn flat icon
-                   color="red lighten-2"
-                   @click="back"
-                   :disabled="isDisabledBtn.back"
-            >
-                <v-icon>thumb_down</v-icon>
-            </v-btn>
             <v-subheader></v-subheader>
         </v-flex>
     </div>
@@ -78,5 +68,25 @@
 </script>
 
 <style scoped>
+
+    .customize-icons {
+        left: 50px;
+        top: 110px;
+        display: inline-block;
+        cursor: pointer;
+        width: 30px;
+        font-size: 27px;
+        color: #cc3b47;
+    }
+
+    .next {
+        left: 100px;
+        color: #6acc3c;
+    }
+
+    .customize-icons:hover,
+    .next:hover {
+        transform: scale(1.3,1.3);
+    }
 
 </style>

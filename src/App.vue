@@ -137,7 +137,6 @@
             ...mapGetters('editor', {
                 settings: 'settings',
                 elemLength: 'getElemSettingsLength',
-                // isOpenSearch: 'getOpenSearchStatus',
             }),
             ...mapGetters('menu', {
                 links: 'links',

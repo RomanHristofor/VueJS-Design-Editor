@@ -23,7 +23,7 @@
                     >
                         <template slot="item" scope="data">
                             <v-list-tile-content>
-                                <span :style="`font-family:${fontFamily}`">
+                                <span :style="`font-family:${data.item.name}`">
                                     {{ data.item.name }}
                                 </span>
                             </v-list-tile-content>
@@ -84,12 +84,13 @@
             },
             setFontLoaded(e) {
                 if (e) {
-                    if (e.font) {
-                        this.fontFamily = `font-family:${e.name}`;
+                    if (typeof e !== 'object') {
+                        this.fontFamily = `font-family:${e}`;
+
                         WebFontLoader.load({
                             // 'Rubik:n4'  n - normal | i - italic | 1-7 - weight
                             google: {
-                                families: [e.font]
+                                families: [e]
                             },
                             // custom: {
                             //     families: [
@@ -103,7 +104,7 @@
                     let elemSettings = {
                         id: this.id,
                         name: this.settings.name,
-                        newValue: e.name,
+                        newValue: typeof e === 'object' ? e.name : e,
                         oldValue: this.currentValue,
                         selector: this.settings.selector,
                         css: this.settings.css,
